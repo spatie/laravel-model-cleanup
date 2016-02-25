@@ -6,6 +6,6 @@ return [
     ],
     'directories' => [
         app_path('models')
-    ]
+    ],
 
 ];
