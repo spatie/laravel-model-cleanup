@@ -3,10 +3,11 @@
 namespace Spatie\DatabaseCleanup;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 
 class CleanUpModelsCommand extends Command
 {
-
     /**
      * The console command name.
      *
@@ -27,28 +28,46 @@ class CleanUpModelsCommand extends Command
      */
     public function handle()
     {
+        $config = config('laravel-database-cleanup');
 
-        $this->getAllModelClassNames();
-
-        Log::info('old records deleted');
+        if(!empty($config['models'])) $this->deleteExpiredRecords(collect($config['models']));
+        if(!empty($config['directories'])) $this->deleteExpiredRecords($this->filterOutOnlyCleanableModels($config['directories']));
 
     }
 
-    private function getAllModelClassNames()
+    private function filterOutOnlyCleanableModels(array $directory) : Collection
     {
-        $modelClassNames = config('laravel-database-cleanup.models');
+        return $this->getAllModelClassNames($directory)->filter(function($modelClass) {
 
-        foreach($modelClassNames as $modelClassName){
-            $this->deleteExpiredRecordsForModelClass($modelClassName);
-        }
+            return in_array(GetsCleanedUp::class, class_implements($modelClass));
+        });
+
     }
 
-    private function deleteExpiredRecordsForModelClass($expiredModelClass)
+    private function getAllModelClassNames(array $directory) : Collection
     {
-        $model = new $expiredModelClass();
-        foreach ($model->cleanUpModels(365) as $expiredRecord) {
-            $expiredRecord->delete();
-        }
+        return collect(File::files($directory['models']))->map(function ($path) {
+
+            $modelPath = str_replace(base_path().'/', '', $path);
+
+            $modelClass = ucfirst(str_replace(['/', '.php'], ['\\', ''], $modelPath));
+
+            return $modelClass;
+
+        });
     }
+
+
+    private function deleteExpiredRecords(Collection $models)
+    {
+        collect($models)->each(function (string $class) {
+
+            return $class::cleanUpModels($class::query())->delete();
+
+        });
+    }
+
+
+
 
 }

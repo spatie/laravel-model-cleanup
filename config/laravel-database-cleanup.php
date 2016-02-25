@@ -2,10 +2,10 @@
 
 return [
     'models' => [
-        'App\Models\NewsItem::class',
+        App\Models\NewsItem::class,
     ],
     'directories' => [
-        app_path('models')
+        'models' => app_path('models')
     ],
 
 ];

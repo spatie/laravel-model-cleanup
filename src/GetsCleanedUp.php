@@ -3,7 +3,7 @@
 
 namespace Spatie\DatabaseCleanup;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 interface GetsCleanedUp
 {

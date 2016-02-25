@@ -24,6 +24,12 @@ class DatabaseCleanupServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-database-cleanup.php', 'laravel-database-cleanup');
 
+        $this->app->bind('command.db:deleteExpiredRecords', CleanUpModelsCommand::class);
+
+        $this->commands([
+            'command.db:deleteExpiredRecords'
+        ]);
+
     }
 
 }
