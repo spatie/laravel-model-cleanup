@@ -10,7 +10,8 @@ class DatabaseCleanupTest extends TestCase
     public function it_can_delete_expired_records_from_a_database()
     {
         DummyItem::cleanUpModels(DummyItem::query())->delete();
-        $this->assertFalse(DummyItem::count() > 0);
+
+        $this->assertTrue(DummyItem::count() === 10);
     }
 
     /** @test */
@@ -22,7 +23,7 @@ class DatabaseCleanupTest extends TestCase
 
         $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->call('db:deleteExpiredRecords');
 
-        $this->assertFalse(DummyItem::count() > 0);
+        $this->assertTrue(DummyItem::count() === 10);
     }
 
     /** @test */
@@ -33,6 +34,6 @@ class DatabaseCleanupTest extends TestCase
 
         $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->call('db:deleteExpiredRecords');
 
-        $this->assertFalse(DummyItem::count() > 0);
+        $this->assertTrue(DummyItem::count() === 10);
     }
 }

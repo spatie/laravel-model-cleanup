@@ -5,6 +5,8 @@ namespace Spatie\DatabaseCleanup;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use PhpParser\Error;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\ParserFactory;
 use ClassPreloader\Parser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
@@ -57,10 +59,6 @@ class CleanUpModelsCommand extends Command
 
             $modelClass = $this->getClassFromFile($path);
 
-//            $modelClass = 'Spatie\DatabaseCleanup\Test\Models\DummyItem';
-
-//            dd($modelClass);
-
             return $modelClass;
 
         });
@@ -83,23 +81,26 @@ class CleanUpModelsCommand extends Command
 
         // add your visitor
         $traverser->addVisitor(new NameResolver);
-        $traverser->addVisitor(new NodeReader);
-
 
         try {
             $code = file_get_contents($path);
 
             // parse
-            $stmts = $parser->parse($code);
+            $statements = $parser->parse($code);
 
-//            // traverse
-            $stmts = $traverser->traverse($stmts);
+            // traverse
+            $statements = $traverser->traverse($statements);
 
+            return collect($statements[0]->stmts)
+                ->filter(function ($statement) {
+                    return $statement instanceof Class_;
+                })
+                ->map(function (Class_ $statement) {
+                    return $statement->namespacedName->toString();
+                })
+                ->first();
 
-            // return Namespace + className string
-            return $stmts[0]->stmts[4];
-
-        } catch (\PhpParser\Error $e) {
+        } catch (Error $e) {
             echo 'Parse Error: ', $e->getMessage();
         }
 
