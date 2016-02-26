@@ -23,7 +23,6 @@ class DatabaseCleanupTest extends TestCase
         $this->assertFalse(DummyItem::count() > 0);
     }
 
-
     /** @test */
     public function it_can_cleanup_a_database_via_an_command_with_directories_config()
     {
@@ -33,6 +32,4 @@ class DatabaseCleanupTest extends TestCase
 
         $this->assertFalse(DummyItem::count() > 0);
     }
-
-
 }

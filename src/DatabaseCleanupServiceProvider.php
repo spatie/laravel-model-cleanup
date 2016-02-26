@@ -14,7 +14,6 @@ class DatabaseCleanupServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/laravel-database-cleanup.php' => config_path('laravel-database-cleanup.php'),
         ], 'config');
-
     }
 
     /**
@@ -27,9 +26,7 @@ class DatabaseCleanupServiceProvider extends ServiceProvider
         $this->app->bind('command.db:deleteExpiredRecords', CleanUpModelsCommand::class);
 
         $this->commands([
-            'command.db:deleteExpiredRecords'
+            'command.db:deleteExpiredRecords',
         ]);
-
     }
-
 }

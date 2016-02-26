@@ -18,7 +18,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     {
         return [DatabaseCleanupServiceProvider::class];
     }
-    public function  getEnvironmentSetUp($app)
+    public function getEnvironmentSetUp($app)
     {
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
@@ -37,8 +37,6 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         });
 
         $this->createDummyItems();
-
-
     }
     public function getTempDirectory($suffix = '')
     {
@@ -47,11 +45,10 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function createDummyItems()
     {
-        foreach (range(1,10) as $index){
+        foreach (range(1, 10) as $index) {
             DummyItem::create([
-                'created_at'     =>  Carbon::now()->subYear(1)->subDays(7)
+                'created_at' => Carbon::now()->subYear(1)->subDays(7),
             ]);
         }
-
     }
 }

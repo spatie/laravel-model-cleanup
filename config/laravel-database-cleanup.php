@@ -5,7 +5,7 @@ return [
         App\Models\NewsItem::class,
     ],
     'directories' => [
-        'models' => app_path('models')
+        'models' => app_path('models'),
     ],
 
 ];
