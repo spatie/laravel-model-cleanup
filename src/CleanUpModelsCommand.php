@@ -5,6 +5,9 @@ namespace Spatie\DatabaseCleanup;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use PhpParser\ParserFactory;
+use ClassPreloader\Parser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 
 class CleanUpModelsCommand extends Command
 {
@@ -48,15 +51,16 @@ class CleanUpModelsCommand extends Command
     {
         return collect(File::files($directory['models']))->map(function ($path) {
 
-            $modelPath = str_replace(base_path().'/', '', $path);
+//            $modelPath = str_replace(base_path().'/', '', $path);
 
-            $modelClass = ucfirst(str_replace(['/', '.php'], ['\\', ''], $modelPath));
+//            $modelClass = ucfirst(str_replace(['/', '.php'], ['\\', ''], $modelPath));
+
+            $modelClass = $this->getClassFromFile($path);
 
             return $modelClass;
 
         });
     }
-
 
     private function deleteExpiredRecords(Collection $models)
     {
@@ -67,7 +71,35 @@ class CleanUpModelsCommand extends Command
         });
     }
 
+    private function getClassFromFile(string $path) : string
+    {
+        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $traverser = new NodeTraverser;
 
+
+        // add your visitor
+        $traverser->addVisitor(new NameResolver);
+        $traverser->addVisitor(new MyNodeVisitor);
+
+
+        try {
+            $code = file_get_contents($path);
+
+            // parse
+            $stmts = $parser->parse($code);
+
+//            // traverse
+            $stmts = $traverser->traverse($stmts);
+
+
+            // return Namespace + className string
+            return $stmts[0]->stmts[4];
+
+        } catch (\PhpParser\Error $e) {
+            echo 'Parse Error: ', $e->getMessage();
+        }
+
+    }
 
 
 }
