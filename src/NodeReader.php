@@ -6,7 +6,7 @@ use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Stmt;
 
-class MyNodeVisitor extends NodeVisitorAbstract
+class NodeReader extends NodeVisitorAbstract
 {
     public function leaveNode(Node $node)
     {

@@ -83,7 +83,7 @@ class CleanUpModelsCommand extends Command
 
         // add your visitor
         $traverser->addVisitor(new NameResolver);
-        $traverser->addVisitor(new MyNodeVisitor);
+        $traverser->addVisitor(new NodeReader);
 
 
         try {
