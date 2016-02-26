@@ -47,7 +47,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     {
         foreach (range(1, 10) as $index) {
             DummyItem::create([
-                'created_at' => Carbon::now()->subYear(1)->subDays(7),
+                'created_at' => Carbon::now()->subYear(1)->subDays(7)
+            ]);
+        }
+
+        foreach (range(1, 10) as $index) {
+            DummyItem::create([
+                'created_at' => Carbon::now()->subDays(30)
             ]);
         }
     }
