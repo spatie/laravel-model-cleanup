@@ -7,10 +7,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-database-cleanup.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-database-cleanup)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-database-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-database-cleanup)
 
-**Note:** Replace ```Jolita Grazyte``` ```JolitaGrazyte``` ```spatie.be``` ```jolita@spatie.be``` ```laravel-database-cleanup``` ```This package deletes expired records in a database.``` with their correct values in [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE.md](LICENSE.md) and [composer.json](composer.json) files, then delete this line.
-
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what
-PSRs you support to avoid any confusion with users and contributors.
+This package is cleaning up a database. It will delete
 
 Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
@@ -20,6 +17,45 @@ You can install the package via composer:
 ``` bash
 $ composer require spatie/laravel-database-cleanup
 ```
+
+Next up, the service provider must be registered:
+
+```php
+'providers' => [
+    ...
+    Spatie\DatabaseCleanup\DatabaseCleanupServiceProvider::class,
+
+];
+```
+Next, you must publish the config file:
+
+```bash
+php artisan vendor:publish --provider="Spatie\DatabaseCleanup\DatabaseCleanupServiceProvider"
+```
+
+This is the content of the published file laravel-database-cleanup.php
+You must change it to fit your needs.
+```php
+return [
+
+    /*
+     *
+     **/
+    'models' => [
+      //  App\Models\NewsItem::class,
+    ],
+
+    /*
+     *
+     */
+    'directories' => [
+        'models' => app_path('models'),
+    ],
+
+];
+```
+
+
 
 ## Usage
 

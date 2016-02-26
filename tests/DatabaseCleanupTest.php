@@ -19,7 +19,7 @@ class DatabaseCleanupTest extends TestCase
     {
         $this->app['config']->set('laravel-database-cleanup',
             ['models' => [DummyItem::class],
-            'directories' => []]);
+            'directories' => [], ]);
 
         $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->call('db:deleteExpiredRecords');
 
