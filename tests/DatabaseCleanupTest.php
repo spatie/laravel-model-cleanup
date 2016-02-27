@@ -15,24 +15,24 @@ class DatabaseCleanupTest extends TestCase
     }
 
     /** @test */
-    public function it_can_cleanup_a_database_via_an_command_with_models_config()
+    public function it_can_cleanup_a_database_running_command_with_models_config()
     {
         $this->app['config']->set('laravel-database-cleanup',
             ['models' => [DummyItem::class],
             'directories' => [], ]);
 
-        $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->call('db:deleteExpiredRecords');
+        $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->call('databaseCleanup:clean');
 
         $this->assertTrue(DummyItem::count() === 10);
     }
 
     /** @test */
-    public function it_can_cleanup_a_database_via_an_command_with_directories_config()
+    public function it_can_cleanup_a_database_running_command_with_directories_config()
     {
         $this->app['config']->set('laravel-database-cleanup',
             ['models' => [], 'directories' => ['models' => __DIR__.'/Models']]);
 
-        $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->call('db:deleteExpiredRecords');
+        $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->call('databaseCleanup:clean');
 
         $this->assertTrue(DummyItem::count() === 10);
     }
