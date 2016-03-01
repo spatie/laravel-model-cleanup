@@ -7,7 +7,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-database-cleanup.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-database-cleanup)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-database-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-database-cleanup)
 
-This package is cleaning up a database. It will delete
+This package is cleaning up a database programatically through your Eloquent models, that you'll specify in the config file. Specified models must implement GetsCleanedUp interface and have   
 
 Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
@@ -33,16 +33,16 @@ Next, you must publish the config file:
 php artisan vendor:publish --provider="Spatie\DatabaseCleanup\DatabaseCleanupServiceProvider"
 ```
 
-This is the content of the published file laravel-database-cleanup.php
-You must change it to fit your needs.
+This is the content of the published file laravel-database-cleanup.php 
 ```php
 return [
 
     /*
-     *
+     * You can either specify the model classes that must be cleaned up or a directory with the models inside.
      **/
     'models' => [
       //  App\Models\NewsItem::class,
+
     ],
 
     /*
@@ -55,13 +55,21 @@ return [
 ];
 ```
 
-
-
 ## Usage
+All models that you want to get cleaned up must implement GetsCleanedUp interface and have a method cleanUpModel 
+in which you can specify how old records in a database have to be to get cleaned up.
 
 ``` php
-$skeleton = new Spatie\Skeleton();
-echo $skeleton->echoPhrase('Hello, Spatie!');
+class NewsItem extends ModuleModel implements FeedItem, GetsCleanedUp
+{
+    ...
+    
+     public static function cleanUpModel(Builder $query) : Builder
+     {
+        return $query->where('created_at', '<', Carbon::now()->subDays(365));
+     }
+    
+}
 ```
 
 ## Changelog

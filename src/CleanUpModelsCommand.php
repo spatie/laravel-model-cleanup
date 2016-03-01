@@ -66,7 +66,7 @@ class CleanUpModelsCommand extends Command
     {
         collect($models)->each(function (string $class) {
 
-            return $class::cleanUpModels($class::query())->delete();
+            return $class::cleanUpModel($class::query())->delete();
 
         });
     }

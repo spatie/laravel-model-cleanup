@@ -9,7 +9,7 @@ class DatabaseCleanupTest extends TestCase
     /** @test */
     public function it_can_delete_expired_records_from_a_database()
     {
-        DummyItem::cleanUpModels(DummyItem::query())->delete();
+        DummyItem::cleanUpModel(DummyItem::query())->delete();
 
         $this->assertTrue(DummyItem::count() === 10);
     }
