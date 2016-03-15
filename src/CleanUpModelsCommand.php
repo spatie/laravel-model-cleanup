@@ -43,7 +43,7 @@ class CleanUpModelsCommand extends Command
         }
     }
 
-    private function filterOutOnlyCleanableModels(array $directory) : Collection
+    protected function filterOutOnlyCleanableModels(array $directory) : Collection
     {
         return $this->getAllModelClassNames($directory)->filter(function ($modelClass) {
 
@@ -51,7 +51,7 @@ class CleanUpModelsCommand extends Command
         });
     }
 
-    private function getAllModelClassNames(array $directory) : Collection
+    protected function getAllModelClassNames(array $directory) : Collection
     {
         return collect(File::files($directory['models']))->map(function ($path) {
 
@@ -62,7 +62,7 @@ class CleanUpModelsCommand extends Command
         });
     }
 
-    private function deleteExpiredRecords(Collection $models)
+    protected function deleteExpiredRecords(Collection $models)
     {
         collect($models)->each(function (string $class) {
 
@@ -71,7 +71,7 @@ class CleanUpModelsCommand extends Command
         });
     }
 
-    private function getClassFromFile(string $path) : string
+    protected function getClassFromFile(string $path) : string
     {
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $traverser = new NodeTraverser();
