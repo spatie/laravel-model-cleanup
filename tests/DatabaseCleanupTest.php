@@ -21,7 +21,7 @@ class DatabaseCleanupTest extends TestCase
             ['models' => [DummyItem::class],
             'directories' => [], ]);
 
-        $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->call('databaseCleanup:clean');
+        $this->app->make(Kernel::class)->call('databaseCleanup:clean');
 
         $this->assertTrue(DummyItem::count() === 10);
     }
@@ -32,7 +32,7 @@ class DatabaseCleanupTest extends TestCase
         $this->app['config']->set('laravel-database-cleanup',
             ['models' => [], 'directories' => ['models' => __DIR__.'/Models']]);
 
-        $this->app->make(\Illuminate\Contracts\Console\Kernel::class)->call('databaseCleanup:clean');
+        $this->app->make(Kernel::class)->call('databaseCleanup:clean');
 
         $this->assertTrue(DummyItem::count() === 10);
     }
