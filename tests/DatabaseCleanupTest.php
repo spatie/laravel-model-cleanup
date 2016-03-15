@@ -3,6 +3,7 @@
 namespace Spatie\DatabaseCleanup\Test;
 
 use Spatie\DatabaseCleanup\Test\Models\DummyItem;
+use \Illuminate\Contracts\Console\Kernel;
 
 class DatabaseCleanupTest extends TestCase
 {
