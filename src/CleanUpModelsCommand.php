@@ -92,7 +92,7 @@ class CleanUpModelsCommand extends Command
 
             $query->delete();
 
-            $this->comment("Model {$query} is got cleaned. {$count} records have been deleted.");
+            $this->comment("Model {$class} is got cleaned. {$count} records have been deleted.");
 
         });
     }

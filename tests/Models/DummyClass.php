@@ -2,12 +2,12 @@
 
 namespace Spatie\DatabaseCleanup\Test\Models;
 
-/**
- * Class DummyClass
- *
- * @package \Spatie\DatabaseCleanup\Test\Models
- */
-class DummyClass
+use Illuminate\Database\Eloquent\Model;
+
+class DummyClass extends Model
 {
+    protected $table = 'dummy_class';
+    protected $guarded = [];
+    public $timestamps = false;
 
 }

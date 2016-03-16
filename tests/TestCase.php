@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\DatabaseCleanup\DatabaseCleanupServiceProvider;
 use Spatie\DatabaseCleanup\Test\Models\DummyItem;
+use Spatie\DatabaseCleanup\Test\Models\DummyClass;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -36,6 +37,11 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->timestamp('created_at');
         });
 
+        $app['db']->connection()->getSchemaBuilder()->create('dummy_class', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamp('created_at');
+        });
+
         $this->createDummyItems();
     }
     public function getTempDirectory($suffix = '')
@@ -54,6 +60,12 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         foreach (range(1, 10) as $index) {
             DummyItem::create([
                 'created_at' => Carbon::now()->subDays(30),
+            ]);
+        }
+
+        foreach (range(1, 10) as $index) {
+            DummyClass::create([
+                'created_at' => Carbon::now()->subYear(1)->subDays(7),
             ]);
         }
     }
