@@ -61,7 +61,12 @@ All models that you want to get cleaned up must implement GetsCleanedUp interfac
 in which you can specify how old records in a database have to be to get cleaned up.
 
 ``` php
-class NewsItem extends ModuleModel implements FeedItem, GetsCleanedUp
+
+use Spatie\DatabaseCleanup\GetsCleanedUp;
+use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
+
+class NewsItem extends ModuleModel implements GetsCleanedUp
 {
     ...
     

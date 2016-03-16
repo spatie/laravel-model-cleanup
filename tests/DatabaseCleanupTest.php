@@ -3,7 +3,7 @@
 namespace Spatie\DatabaseCleanup\Test;
 
 use Spatie\DatabaseCleanup\Test\Models\DummyItem;
-use \Illuminate\Contracts\Console\Kernel;
+use Illuminate\Contracts\Console\Kernel;
 
 class DatabaseCleanupTest extends TestCase
 {
@@ -20,7 +20,7 @@ class DatabaseCleanupTest extends TestCase
     {
         $this->app['config']->set('laravel-database-cleanup',
             ['models' => [DummyItem::class],
-            'directories' => [], ]);
+            'directories' => [__DIR__.'/Models', __DIR__.'/Models2'], ]);
 
         $this->app->make(Kernel::class)->call('databaseCleanup:clean');
 
@@ -31,7 +31,7 @@ class DatabaseCleanupTest extends TestCase
     public function it_can_cleanup_a_database_running_command_with_directories_config()
     {
         $this->app['config']->set('laravel-database-cleanup',
-            ['models' => [], 'directories' => ['models' => __DIR__.'/Models']]);
+            ['models' => [DummyItem::class], 'directories' => [__DIR__.'/Models', __DIR__.'/Models2']]);
 
         $this->app->make(Kernel::class)->call('databaseCleanup:clean');
 
