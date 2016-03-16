@@ -10,8 +10,7 @@ use Carbon\Carbon;
 class DummyItem extends Model implements GetsCleanedUp
 {
     protected $table = 'dummy_items';
-    protected $fillable = ['created_at'];
-    protected $dates = ['created_at'];
+    protected $guarded = [];
     public $timestamps = false;
 
     public static function cleanUpModel(Builder $query) : Builder

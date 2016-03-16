@@ -3,13 +3,15 @@
 namespace Spatie\DatabaseCleanup;
 
 use Illuminate\Console\Command;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
+use Illuminate\Filesystem\Filesystem as File;
 use PhpParser\Error;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\ParserFactory;
 use ClassPreloader\Parser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
+use Symfony\Component\Debug\Exception\FatalErrorException;
 
 class CleanUpModelsCommand extends Command
 {
@@ -26,6 +28,14 @@ class CleanUpModelsCommand extends Command
      */
     protected $description = 'Delete all expired records from all chosen tables.';
 
+    protected $app;
+
+    public function __construct(Application $app)
+    {
+        parent::__construct();
+        $this->app = $app;
+    }
+
     /**
      * Execute the console command.
      *
@@ -33,13 +43,40 @@ class CleanUpModelsCommand extends Command
      */
     public function handle()
     {
-        $config = config('laravel-database-cleanup');
+        $models = collect(config('laravel-database-cleanup.models'));
 
-        if (!empty($config['models'])) {
-            $this->deleteExpiredRecords(collect($config['models']));
+        $directories = config('laravel-database-cleanup.directories');
+
+        $this->cleanUpModels($models);
+
+        $this->cleanUpDirectories($directories);
+
+    }
+
+    protected function cleanUpModels($models)
+    {
+        if (!empty($models)) {
+            $this->comment('Start deleting models.');
+            try{
+                $this->deleteExpiredRecords($models);
+            }
+            catch(FatalErrorException $error){
+
+                $this->error('Something went wrong: ' .$error->getMessage());
+            }
         }
-        if (!empty($config['directories'])) {
-            $this->deleteExpiredRecords($this->filterOutOnlyCleanableModels($config['directories']));
+    }
+
+    protected function cleanUpDirectories($directories)
+    {
+        if (!empty($directories)) {
+            $this->comment('Start deleting directories.');
+            try{
+                $this->deleteExpiredRecords($this->filterOutOnlyCleanableModels($directories));
+            }
+            catch(FatalErrorException $error){
+                $this->error('Something went wrong: ' .$error->getMessage());
+            }
         }
     }
 
@@ -53,7 +90,9 @@ class CleanUpModelsCommand extends Command
 
     protected function getAllModelClassNames(array $directory) : Collection
     {
-        return collect(File::files($directory['models']))->map(function ($path) {
+        $fileClass = $this->app->make(File::class);
+
+        return collect($fileClass->files($directory['models']))->map(function ($path) {
 
             $modelClass = $this->getClassFromFile($path);
 
@@ -96,8 +135,9 @@ class CleanUpModelsCommand extends Command
                     return $statement->namespacedName->toString();
                 })
                 ->first();
-        } catch (Error $e) {
-            echo 'Parse Error: ', $e->getMessage();
+        } catch (Error $error) {
+            $this->error('Parse Error: '. $error->getMessage());
         }
     }
+
 }
