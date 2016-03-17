@@ -14,7 +14,6 @@ The specified models must implement GetsCleanedUp interface and have a cleanUpMo
 Here's an example:
 
 ``` php
-
 use Spatie\DatabaseCleanup\GetsCleanedUp;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
@@ -86,7 +85,6 @@ Let's say you have a model called NewsItem, that you would like to get cleaned u
 In this case your model with a GetCleanedUp implementation could look like in this example:
 
 ``` php
-
 use Spatie\DatabaseCleanup\GetsCleanedUp;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
@@ -115,7 +113,6 @@ Otherwise you may add this task in the schedule method of the App\Console\Kernel
 $schedule->call('databaseCleanup:clean')->daily();
     
 * * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
-
 ```
 
 
