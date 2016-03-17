@@ -9,5 +9,4 @@ class DummyClass extends Model
     protected $table = 'dummy_class';
     protected $guarded = [];
     public $timestamps = false;
-
 }

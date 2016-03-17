@@ -46,7 +46,6 @@ class CleanUpModelsCommand extends Command
         $models = $this->getAllModels();
 
         $this->cleanUp($models);
-
     }
 
     protected function getAllModels() : Collection
@@ -63,14 +62,12 @@ class CleanUpModelsCommand extends Command
         return $allModels;
     }
 
-
     protected function cleanUp(Collection $collections)
     {
         $cleanables = $this->filterOutOnlyCleanableModels($collections);
 
         return $this->cleanExpiredRecords($cleanables);
     }
-
 
     protected function filterOutOnlyCleanableModels(Collection $collections) : Collection
     {
@@ -79,16 +76,15 @@ class CleanUpModelsCommand extends Command
             return in_array(GetsCleanedUp::class, class_implements($modelClass));
 
         });
-       ;
     }
 
     protected function cleanExpiredRecords(Collection $models)
     {
-        $models->each(function(string $class){
+        $models->each(function (string $class) {
 
             $query = $class::cleanUpModel($class::query());
 
-            $count  = $query->count();
+            $count = $query->count();
 
             $query->delete();
 
@@ -97,10 +93,9 @@ class CleanUpModelsCommand extends Command
         });
     }
 
-
     protected function getAllModelsOfEachDirectory(array $directories) : Collection
     {
-        return collect($directories)->map(function($directory){
+        return collect($directories)->map(function ($directory) {
 
             return $this->getAllModelClassNames($directory)->all();
 
@@ -144,6 +139,4 @@ class CleanUpModelsCommand extends Command
             $this->error('Parse Error: '.$error->getMessage());
         }
     }
-
-
 }

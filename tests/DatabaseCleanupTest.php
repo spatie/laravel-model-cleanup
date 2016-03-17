@@ -46,7 +46,7 @@ class DatabaseCleanupTest extends TestCase
         $this->app['config']->set('laravel-database-cleanup',
             [
                 'models' => [DummyItem::class],
-                'directories' => [__DIR__.'/Models']
+                'directories' => [__DIR__.'/Models'],
             ]);
 
         $this->app->make(Kernel::class)->call('databaseCleanup:clean');
@@ -69,7 +69,7 @@ class DatabaseCleanupTest extends TestCase
         $this->app['config']->set('laravel-database-cleanup',
             [
                 'models' => [],
-                'directories' => [__DIR__ . '/Models']
+                'directories' => [__DIR__.'/Models'],
             ]);
     }
 }
