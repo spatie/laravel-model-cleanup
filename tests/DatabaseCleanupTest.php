@@ -17,7 +17,7 @@ class DatabaseCleanupTest extends TestCase
     }
 
     /** @test */
-    public function it_can_cleanup_a_database_running_command_with_models_config()
+    public function it_can_cleanup_a_database_running_command_with_models_config_only()
     {
         $this->app['config']->set('laravel-database-cleanup',
             [
@@ -31,7 +31,17 @@ class DatabaseCleanupTest extends TestCase
     }
 
     /** @test */
-    public function it_can_cleanup_a_database_running_command_with_directories_config()
+    public function it_can_cleanup_a_database_running_command_with_directories_config_only()
+    {
+        $this->setConfig();
+
+        $this->app->make(Kernel::class)->call('databaseCleanup:clean');
+
+        $this->assertTrue(DummyItem::count() === 10);
+    }
+
+    /** @test */
+    public function it_can_cleanup_a_database_running_command_with_models_and_directories_config()
     {
         $this->app['config']->set('laravel-database-cleanup',
             [
@@ -45,30 +55,21 @@ class DatabaseCleanupTest extends TestCase
     }
 
     /** @test */
-    public function it_can_cleanup_a_database_running_command_with_models_and_directories_config()
-    {
-        $this->app['config']->set('laravel-database-cleanup',
-            [
-                'models' => [],
-                'directories' => [__DIR__.'/Models']
-            ]);
-
-        $this->app->make(Kernel::class)->call('databaseCleanup:clean');
-
-        $this->assertTrue(DummyItem::count() === 10);
-    }
-
-    /** @test */
     public function it_does_not_clean_up_models_that_do_not_implement_gets_cleaned_up()
     {
-        $this->app['config']->set('laravel-database-cleanup',
-            [
-                'models' => [],
-                'directories' => [__DIR__.'/Models']
-            ]);
+        $this->setConfig();
 
         $this->app->make(Kernel::class)->call('databaseCleanup:clean');
 
         $this->assertTrue(DummyClass::count() === 10);
+    }
+
+    protected function setConfig()
+    {
+        $this->app['config']->set('laravel-database-cleanup',
+            [
+                'models' => [],
+                'directories' => [__DIR__ . '/Models']
+            ]);
     }
 }

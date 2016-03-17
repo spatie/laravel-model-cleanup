@@ -1,4 +1,4 @@
-# laravel-database-cleanup
+# Cleaning up database programmatically
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-database-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-database-cleanup)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
@@ -7,7 +7,29 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-database-cleanup.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-database-cleanup)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-database-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-database-cleanup)
 
-This package is cleaning up a database programatically through your Eloquent models, that you'll specify in the config file. Specified models must implement GetsCleanedUp interface and have   
+This package will clean up a database programmatically through your Eloquent models, that you'll specify in the config file. 
+
+The specified models must implement GetsCleanedUp interface and have a cleanUpModel method.
+
+Here's an example:
+
+``` php
+
+use Spatie\DatabaseCleanup\GetsCleanedUp;
+use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
+
+class NewsItem extends Model implements GetsCleanedUp
+{
+    ...
+    
+     public static function cleanUpModel(Builder $query) : Builder
+     {
+        return $query->where('created_at', '<', Carbon::now()->subDays(365));
+     }
+    
+}
+```
 
 Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
@@ -33,16 +55,16 @@ Next, you must publish the config file:
 php artisan vendor:publish --provider="Spatie\DatabaseCleanup\DatabaseCleanupServiceProvider"
 ```
 
-This is the content of the published file laravel-database-cleanup.php 
+This is the content of the published file laravel-database-cleanup.php.
 ```php
 return [
 
     /*
-     * You can either specify model classes that must be cleaned up or a directory with the models inside, 
-     * or both if that makes sense.
+      * You can either specify model classes that must be cleaned up or a directory with the models that you want to get cleaned up inside,
+      * or both if that makes sense.
      **/
     'models' => [
-      //  App\Models\NewsItem::class,
+      //  App\NewsItem::class,
 
     ],
 
@@ -50,7 +72,8 @@ return [
      *
      */
     'directories' => [
-        'models' => app_path('models'),
+      //  app_path('models'),
+      //  app_path('models')
     ],
 
 ];
@@ -58,7 +81,10 @@ return [
 
 ## Usage
 All models that you want to get cleaned up must implement GetsCleanedUp interface and have a method cleanUpModel 
-in which you can specify how old records in a database have to be to get cleaned up.
+in which you can specify how old the records in a database have to be to get cleaned up.
+
+Let's say you have a model called NewsItem, that you would like to get cleaned up automatically. 
+In this case your model could look like in this example here below:
 
 ``` php
 
@@ -66,7 +92,7 @@ use Spatie\DatabaseCleanup\GetsCleanedUp;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
-class NewsItem extends ModuleModel implements GetsCleanedUp
+class NewsItem extends Model implements GetsCleanedUp
 {
     ...
     
