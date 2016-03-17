@@ -54,7 +54,7 @@ Next, you must publish the config file:
 php artisan vendor:publish --provider="Spatie\DatabaseCleanup\DatabaseCleanupServiceProvider"
 ```
 
-This is the content of the published file laravel-database-cleanup.php.
+This is the content of the published config file `laravel-database-cleanup.php`.
 ```php
 return [
 
