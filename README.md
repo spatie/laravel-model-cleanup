@@ -81,8 +81,9 @@ return [
 All models that you want to get cleaned up must implement GetsCleanedUp interface and have a method cleanUpModel 
 in which you can specify how old the records in a database have to be to get cleaned up.
 
-Let's say you have a model called NewsItem, that you would like to get cleaned up automatically. 
-In this case your model could look like in this example here below:
+Let's say you have a model called NewsItem, that you would like to get cleaned up automatically.
+ 
+In this case your model with a GetCleanedUp implementation could look like in this example:
 
 ``` php
 
