@@ -69,9 +69,6 @@ return [
 
     ],
 
-    /*
-     *
-     */
     'directories' => [
       //  app_path('models'),
       //  app_path('models')
