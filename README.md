@@ -102,7 +102,7 @@ class NewsItem extends Model implements GetsCleanedUp
     
 }
 ```
-## Scheduling
+### Scheduling
 If you want the cleanup command run automatically you must schedule it.
 
 You can schedule it apart in the cron as you want.
