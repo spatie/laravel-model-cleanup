@@ -102,6 +102,21 @@ class NewsItem extends Model implements GetsCleanedUp
     
 }
 ```
+## Scheduling
+If you want the cleanup command run automatically you must schedule it.
+
+You can schedule it apart in the cron as you want.
+ 
+```
+  * * * * * php /path/to/artisan databaseCleanup:clean >> /dev/null 2>&1
+```
+Otherwise you may add this task in the schedule method of the App\Console\Kernel and run a cron for all scheduled tasks at once.
+```
+    $schedule->call('databaseCleanup:clean')->daily();
+    
+    * * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
+```
+
 
 ## Changelog
 
