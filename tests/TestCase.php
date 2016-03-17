@@ -5,8 +5,8 @@ namespace Spatie\DatabaseCleanup\Test;
 use Carbon\Carbon;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\DatabaseCleanup\DatabaseCleanupServiceProvider;
-use Spatie\DatabaseCleanup\Test\Models\DummyItem;
-use Spatie\DatabaseCleanup\Test\Models\DummyClass;
+use Spatie\DatabaseCleanup\Test\Models\CleanableItem;
+use Spatie\DatabaseCleanup\Test\Models\UncleanableItem;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -15,10 +15,12 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         parent::setUp();
         $this->setUpDatabase($this->app);
     }
+
     protected function getPackageProviders($app)
     {
         return [DatabaseCleanupServiceProvider::class];
     }
+
     public function getEnvironmentSetUp($app)
     {
         $app['config']->set('database.default', 'sqlite');
@@ -29,42 +31,41 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         ]);
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }
+
     protected function setUpDatabase($app)
     {
         file_put_contents($this->getTempDirectory().'/database.sqlite', null);
-        $app['db']->connection()->getSchemaBuilder()->create('dummy_items', function (Blueprint $table) {
+
+        $app['db']->connection()->getSchemaBuilder()->create('cleanable_items', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('created_at');
         });
 
-        $app['db']->connection()->getSchemaBuilder()->create('dummy_class', function (Blueprint $table) {
+        $app['db']->connection()->getSchemaBuilder()->create('uncleanable_items', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('created_at');
         });
 
-        $this->createDummyItems();
+        $this->createDatabaseRecords();
     }
+
     public function getTempDirectory($suffix = '')
     {
         return __DIR__.'/temp'.($suffix == '' ? '' : '/'.$suffix);
     }
 
-    protected function createDummyItems()
+    protected function createDatabaseRecords()
     {
         foreach (range(1, 10) as $index) {
-            DummyItem::create([
+            CleanableItem::create([
                 'created_at' => Carbon::now()->subYear(1)->subDays(7),
             ]);
-        }
 
-        foreach (range(1, 10) as $index) {
-            DummyItem::create([
-                'created_at' => Carbon::now()->subDays(30),
+            CleanableItem::create([
+                'created_at' => Carbon::now()->subMonth(),
             ]);
-        }
 
-        foreach (range(1, 10) as $index) {
-            DummyClass::create([
+            UncleanableItem::create([
                 'created_at' => Carbon::now()->subYear(1)->subDays(7),
             ]);
         }

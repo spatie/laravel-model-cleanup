@@ -1,4 +1,4 @@
-# Cleaning up database programmatically
+# Clean up unneeded records
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-database-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-database-cleanup)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
@@ -7,11 +7,11 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-database-cleanup.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-database-cleanup)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-database-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-database-cleanup)
 
-This package will clean up a database programmatically through your Eloquent models, that you'll specify in the config file. 
+This package will clean up unneeded records for your Eloquent models. 
 
-The specified models must implement GetsCleanedUp interface and have a cleanUpModel method.
+The only thing you have to do is implement the `GetsCleanedUp`-interface.
 
-Here's an example:
+Here's a quick example:
 
 ``` php
 use Spatie\DatabaseCleanup\GetsCleanedUp;
@@ -22,11 +22,11 @@ class NewsItem extends Model implements GetsCleanedUp
 {
     ...
     
-     public static function cleanUpModel(Builder $query) : Builder
+     public static function cleanUp(Builder $query) : Builder
      {
-        return $query->where('created_at', '<', Carbon::now()->subDays(365));
+        //delete up all records older than a year
+        return $query->where('created_at', '<', Carbon::now()->subYear());
      }
-    
 }
 ```
 
@@ -36,7 +36,7 @@ Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview 
 
 You can install the package via composer:
 ``` bash
-$ composer require spatie/laravel-database-cleanup
+composer require spatie/laravel-database-cleanup
 ```
 
 Next up, the service provider must be registered:
@@ -59,30 +59,27 @@ This is the content of the published file laravel-database-cleanup.php.
 return [
 
     /*
-      * You can either specify model classes that must be cleaned up or a directory 
-      * with the models that you want to get cleaned up inside,
-      * or both if that makes sense.
-     **/
-    'models' => [
-      //  App\NewsItem::class,
-
+     * All models that use the GetsCleanedUp interface in these directories will be cleaned.
+     */
+    'directories' => [
+        // app_path('models'),
     ],
 
-    'directories' => [
-      //  app_path('models'),
-      //  app_path('models')
+    /*
+     * All models in this array that use the GetsCleanedUp interface will be cleaned.
+     */
+    'models' => [
+        // App\NewsItem::class,
     ],
 
 ];
 ```
 
 ## Usage
-All models that you want to get cleaned up must implement GetsCleanedUp interface and have a method cleanUpModel 
-in which you can specify how old the records in a database have to be to get cleaned up.
+All models that you want to clean up must implement the `GetsCleanedUp`-interface. In the required
+`cleanUp`-method you can specify a query that selects the records that should be deleted.
 
-Let's say you have a model called NewsItem, that you would like to get cleaned up automatically.
- 
-In this case your model with a GetCleanedUp implementation could look like in this example:
+Let's say you have a model called `NewsItem`, that you would like to  cleaned up. In this case your model could look like this:
 
 ``` php
 use Spatie\DatabaseCleanup\GetsCleanedUp;
@@ -93,28 +90,26 @@ class NewsItem extends Model implements GetsCleanedUp
 {
     ...
     
-     public static function cleanUpModel(Builder $query) : Builder
+     public static function cleanUp(Builder $query) : Builder
      {
-        return $query->where('created_at', '<', Carbon::now()->subDays(365));
+        return $query->where('created_at', '<', Carbon::now()->subYear());
      }
     
 }
 ```
-### Scheduling
-If you want the cleanup command run automatically you must schedule it.
 
-You can schedule it apart in the cron as you want.
- 
-```
-* * * * * php /path/to/artisan databaseCleanup:clean >> /dev/null 2>&1
-```
-Otherwise you may add this task in the schedule method of the App\Console\Kernel and run a cron for all scheduled tasks at once.
-```
-$schedule->call('databaseCleanup:clean')->daily();
-    
-* * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
-```
+When running the console command `clean:models` all newsItems older than a year will be deleted.
 
+This command can be scheduled in Laravel's console kernel.
+
+```php
+// app/Console/Kernel.php
+
+protected function schedule(Schedule $schedule)
+{
+   $schedule->command('clean:models')->daily();
+}
+```
 
 ## Changelog
 
@@ -123,7 +118,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recen
 ## Testing
 
 ``` bash
-$ composer test
+composer test
 ```
 
 ## Contributing
@@ -137,6 +132,7 @@ If you discover any security related issues, please email freek@spatie.be instea
 ## Credits
 
 - [Jolita Grazyte](https://github.com/JolitaGrazyte)
+- [Freek Van der Herten](https://github.com/freekmurze)
 - [All Contributors](../../contributors)
 
 ## About Spatie

@@ -10,8 +10,13 @@
     "authors": [
         {
             "name": "Jolita Grazyte",
-
             "email": "jolita@spatie.be",
+            "homepage": "https://spatie.be",
+            "role": "Developer"
+        },
+        {
+            "name": "Freek Van der Herten",
+            "email": "freek@spatie.be",
             "homepage": "https://spatie.be",
             "role": "Developer"
         }
@@ -19,11 +24,11 @@
     "require": {
         "php" : "^7.0",
         "illuminate/support": "^5.2",
-        "nesbot/carbon": "~1.0",
+        "nesbot/carbon": "^1.0",
         "nikic/php-parser":"^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "5.*",
+        "phpunit/phpunit": "^5.0",
         "orchestra/testbench":"^3.2"
     },
     "autoload": {

@@ -7,14 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\DatabaseCleanup\GetsCleanedUp;
 use Carbon\Carbon;
 
-class DummyItem extends Model implements GetsCleanedUp
+class CleanableItem extends Model implements GetsCleanedUp
 {
-    protected $table = 'dummy_items';
+    protected $table = 'cleanable_items';
+
     protected $guarded = [];
+
     public $timestamps = false;
 
-    public static function cleanUpModel(Builder $query) : Builder
+    public static function cleanUp(Builder $query) : Builder
     {
-        return $query->where('created_at', '<', Carbon::now()->subDays(365));
+        return $query->where('created_at', '<', Carbon::now()->subYear());
     }
 }

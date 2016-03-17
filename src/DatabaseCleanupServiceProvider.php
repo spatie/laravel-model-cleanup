@@ -23,10 +23,10 @@ class DatabaseCleanupServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-database-cleanup.php', 'laravel-database-cleanup');
 
-        $this->app->bind('command.databaseCleanup:clean', CleanUpModelsCommand::class);
+        $this->app->bind('command.clean:models', CleanUpModelsCommand::class);
 
         $this->commands([
-            'command.databaseCleanup:clean',
+            'command.clean:models',
         ]);
     }
 }

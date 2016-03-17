@@ -4,9 +4,11 @@ namespace Spatie\DatabaseCleanup\Test\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DummyClass extends Model
+class UncleanableItem extends Model
 {
-    protected $table = 'dummy_class';
+    protected $table = 'uncleanable_items';
+
     protected $guarded = [];
+
     public $timestamps = false;
 }

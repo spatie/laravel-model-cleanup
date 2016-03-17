@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Builder;
 
 interface GetsCleanedUp
 {
-    public static function cleanUpModel(Builder $query) : Builder;
+    public static function cleanUp(Builder $query) : Builder;
 }

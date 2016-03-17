@@ -3,17 +3,17 @@
 return [
 
     /*
-     *You can either specify model classes that must be cleaned up or a directory
-     * with the models that you want to get cleaned up inside,
-     * or both if that makes sense.
-     **/
-    'models' => [
-//       App\NewsItem::class,
+     * All models that use the GetsCleanedUp interface in these directories will be cleaned.
+     */
+    'directories' => [
+        // app_path('models'),
     ],
 
-    'directories' => [
-//        app_path(),
-//        app_path('models'),
+    /*
+     * All models in this array that use the GetsCleanedUp interface will be cleaned.
+     */
+    'models' => [
+        // App\NewsItem::class,
     ],
 
 ];

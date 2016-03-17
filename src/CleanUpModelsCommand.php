@@ -5,7 +5,6 @@ namespace Spatie\DatabaseCleanup;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
-use PhpParser\Error;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\ParserFactory;
 use ClassPreloader\Parser\NodeTraverser;
@@ -18,77 +17,60 @@ class CleanUpModelsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'databaseCleanup:clean';
+    protected $signature = 'clean:models';
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Delete all expired records from all chosen tables.';
+    protected $description = 'Clean up models.';
 
     protected $filesystem;
 
     public function __construct(Filesystem $filesystem)
     {
         parent::__construct();
+
         $this->filesystem = $filesystem;
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
-        $this->comment('Start cleaning up models.');
+        $this->comment('Cleaning models...');
 
-        $models = $this->getAllModels();
+        $models = $this->getModelsThatShouldBeCleanedUp();
 
         $this->cleanUp($models);
+
+        $this->comment('All done!');
     }
 
-    protected function getAllModels() : Collection
+    protected function getModelsThatShouldBeCleanedUp() : Collection
     {
         $directories = config('laravel-database-cleanup.directories');
-        $modelsClasses = config('laravel-database-cleanup.models');
 
         $modelsFromDirectories = $this->getAllModelsOfEachDirectory($directories);
 
-        $allModels = $modelsFromDirectories
-            ->merge(collect($modelsClasses))
-            ->flatten();
+        $cleanableModels = $modelsFromDirectories
+            ->merge(collect(config('laravel-database-cleanup.models')))
+            ->flatten()
+            ->filter(function ($modelClass) {
 
-        return $allModels;
+                return in_array(GetsCleanedUp::class, class_implements($modelClass));
+            });
+
+        return $cleanableModels;
     }
 
-    protected function cleanUp(Collection $collections)
-    {
-        $cleanables = $this->filterOutOnlyCleanableModels($collections);
-
-        return $this->cleanExpiredRecords($cleanables);
-    }
-
-    protected function filterOutOnlyCleanableModels(Collection $collections) : Collection
-    {
-        return $collections->filter(function ($modelClass) {
-
-            return in_array(GetsCleanedUp::class, class_implements($modelClass));
-
-        });
-    }
-
-    protected function cleanExpiredRecords(Collection $models)
+    protected function cleanUp(Collection $models)
     {
         $models->each(function (string $class) {
 
-            $query = $class::cleanUpModel($class::query());
+            $query = $class::cleanUp($class::query());
 
-            $count = $query->count();
+            $numberOfDeletedRecords = $query->delete();
 
-            $query->delete();
-
-            $this->comment("Model {$class} is got cleaned. {$count} records have been deleted.");
+            $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$class}).");
 
         });
     }
@@ -97,46 +79,40 @@ class CleanUpModelsCommand extends Command
     {
         return collect($directories)->map(function ($directory) {
 
-            return $this->getAllModelClassNames($directory)->all();
+            return $this->getClassNames($directory)->all();
 
         });
     }
 
-    protected function getAllModelClassNames(string $directory) : Collection
+    protected function getClassNames(string $directory) : Collection
     {
         return collect($this->filesystem->files($directory))->map(function ($path) {
 
-            return $this->getClassFromFile($path);
+            return $this->getFullyQualifiedClassNameFromFile($path);
         });
     }
 
-    protected function getClassFromFile(string $path) : string
+    protected function getFullyQualifiedClassNameFromFile(string $path) : string
     {
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+
         $traverser = new NodeTraverser();
 
-        // add your visitor
         $traverser->addVisitor(new NameResolver());
 
-        try {
-            $code = file_get_contents($path);
+        $code = file_get_contents($path);
 
-            // parse
-            $statements = $parser->parse($code);
+        $statements = $parser->parse($code);
 
-            // traverse
-            $statements = $traverser->traverse($statements);
+        $statements = $traverser->traverse($statements);
 
-            return collect($statements[0]->stmts)
-                ->filter(function ($statement) {
-                    return $statement instanceof Class_;
-                })
-                ->map(function (Class_ $statement) {
-                    return $statement->namespacedName->toString();
-                })
-                ->first();
-        } catch (Error $error) {
-            $this->error('Parse Error: '.$error->getMessage());
-        }
+        return collect($statements[0]->stmts)
+            ->filter(function ($statement) {
+                return $statement instanceof Class_;
+            })
+            ->map(function (Class_ $statement) {
+                return $statement->namespacedName->toString();
+            })
+            ->first();
     }
 }

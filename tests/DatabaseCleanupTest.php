@@ -2,8 +2,8 @@
 
 namespace Spatie\DatabaseCleanup\Test;
 
-use Spatie\DatabaseCleanup\Test\Models\DummyItem;
-use Spatie\DatabaseCleanup\Test\Models\DummyClass;
+use Spatie\DatabaseCleanup\Test\Models\CleanableItem;
+use Spatie\DatabaseCleanup\Test\Models\UncleanableItem;
 use Illuminate\Contracts\Console\Kernel;
 
 class DatabaseCleanupTest extends TestCase
@@ -11,60 +11,54 @@ class DatabaseCleanupTest extends TestCase
     /** @test */
     public function it_can_delete_expired_records_from_a_database()
     {
-        DummyItem::cleanUpModel(DummyItem::query())->delete();
+        $this->assertCount(20, CleanableItem::all());
 
-        $this->assertTrue(DummyItem::count() === 10);
+        CleanableItem::cleanUp(CleanableItem::query())->delete();
+
+        $this->assertCount(10, CleanableItem::all());
     }
 
     /** @test */
-    public function it_can_cleanup_a_database_running_command_with_models_config_only()
+    public function it_can_cleanup_the_models_specified_in_the_config_file()
     {
+        $this->assertCount(20, CleanableItem::all());
+
         $this->app['config']->set('laravel-database-cleanup',
             [
-                'models' => [DummyItem::class],
+                'models' => [CleanableItem::class],
                 'directories' => [],
             ]);
 
-        $this->app->make(Kernel::class)->call('databaseCleanup:clean');
+        $this->app->make(Kernel::class)->call('clean:models');
 
-        $this->assertTrue(DummyItem::count() === 10);
+        $this->assertCount(10, CleanableItem::all());
     }
 
     /** @test */
-    public function it_can_cleanup_a_database_running_command_with_directories_config_only()
+    public function it_can_cleanup_the_directories_specified_in_the_config_file()
     {
-        $this->setConfig();
+        $this->assertCount(20, CleanableItem::all());
 
-        $this->app->make(Kernel::class)->call('databaseCleanup:clean');
+        $this->setConfigThatCleansUpDirectory();
 
-        $this->assertTrue(DummyItem::count() === 10);
+        $this->app->make(Kernel::class)->call('clean:models');
+
+        $this->assertCount(10, CleanableItem::all());
     }
 
     /** @test */
-    public function it_can_cleanup_a_database_running_command_with_models_and_directories_config()
+    public function it_leaves_models_without_the_GetCleanUp_trait_untouched()
     {
-        $this->app['config']->set('laravel-database-cleanup',
-            [
-                'models' => [DummyItem::class],
-                'directories' => [__DIR__.'/Models'],
-            ]);
+        $this->assertCount(10, UncleanableItem::all());
 
-        $this->app->make(Kernel::class)->call('databaseCleanup:clean');
+        $this->setConfigThatCleansUpDirectory();
 
-        $this->assertTrue(DummyItem::count() === 10);
+        $this->app->make(Kernel::class)->call('clean:models');
+
+        $this->assertCount(10, UncleanableItem::all());
     }
 
-    /** @test */
-    public function it_does_not_clean_up_models_that_do_not_implement_gets_cleaned_up()
-    {
-        $this->setConfig();
-
-        $this->app->make(Kernel::class)->call('databaseCleanup:clean');
-
-        $this->assertTrue(DummyClass::count() === 10);
-    }
-
-    protected function setConfig()
+    protected function setConfigThatCleansUpDirectory()
     {
         $this->app['config']->set('laravel-database-cleanup',
             [
