@@ -6,9 +6,6 @@ use Illuminate\Support\ServiceProvider;
 
 class ModelCleanupServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     */
     public function boot()
     {
         $this->publishes([
@@ -16,9 +13,6 @@ class ModelCleanupServiceProvider extends ServiceProvider
         ], 'config');
     }
 
-    /**
-     * Register the application services.
-     */
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-model-cleanup.php', 'laravel-model-cleanup');
