@@ -38,9 +38,9 @@ class CleanUpModelsCommand extends Command
     {
         $this->comment('Cleaning models...');
 
-        $models = $this->getModelsThatShouldBeCleanedUp();
+        $cleanableModels = $this->getModelsThatShouldBeCleanedUp();
 
-        $this->cleanUp($models);
+        $this->cleanUp($cleanableModels);
 
         $this->comment('All done!');
     }
@@ -62,9 +62,9 @@ class CleanUpModelsCommand extends Command
         return $cleanableModels;
     }
 
-    protected function cleanUp(Collection $models)
+    protected function cleanUp(Collection $cleanableModels)
     {
-        $models->each(function (string $class) {
+        $cleanableModels->each(function (string $class) {
 
             $query = $class::cleanUp($class::query());
 
