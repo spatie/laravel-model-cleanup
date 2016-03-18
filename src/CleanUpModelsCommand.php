@@ -49,7 +49,7 @@ class CleanUpModelsCommand extends Command
     {
         $directories = config('laravel-model-cleanup.directories');
 
-        $modelsFromDirectories = $this->getAllModelsInEachDirectory($directories);
+        $modelsFromDirectories = $this->getAllModelsFromEachDirectory($directories);
 
         return $modelsFromDirectories
             ->merge(collect(config('laravel-model-cleanup.models')))
@@ -69,7 +69,7 @@ class CleanUpModelsCommand extends Command
         });
     }
 
-    protected function getAllModelsInEachDirectory(array $directories) : Collection
+    protected function getAllModelsFromEachDirectory(array $directories) : Collection
     {
         return collect($directories)
             ->map(function ($directory) {
