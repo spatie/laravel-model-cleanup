@@ -2,19 +2,5 @@
 
 All Notable changes to `laravel-model-cleanup` will be documented in this file
 
-## NEXT - YYYY-MM-DD
-
-### Added
-- Nothing
-
-### Deprecated
-- Nothing
-
-### Fixed
-- Nothing
-
-### Removed
-- Nothing
-
-### Security
-- Nothing
+### 1.0.0 - 2016-03-18
+- Initial release
