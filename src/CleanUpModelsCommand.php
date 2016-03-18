@@ -70,7 +70,7 @@ class CleanUpModelsCommand extends Command
 
             $numberOfDeletedRecords = $query->delete();
 
-            $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$class}).");
+            $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$class}.");
 
         });
     }
