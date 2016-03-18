@@ -13,7 +13,7 @@ return [
      * All models in this array that use the GetsCleanedUp interface will be cleaned.
      */
     'models' => [
-        // App\NewsItem::class,
+        // App\LogItem::class,
     ],
 
 ];
