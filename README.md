@@ -18,7 +18,7 @@ use Spatie\ModelCleanup\GetsCleanedUp;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
-class NewsItem extends Model implements GetsCleanedUp
+class LogItem extends Model implements GetsCleanedUp
 {
     ...
     
@@ -32,7 +32,7 @@ class NewsItem extends Model implements GetsCleanedUp
 
 Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
-## Install
+## Installation
 
 You can install the package via composer:
 ``` bash
@@ -69,7 +69,7 @@ return [
      * All models in this array that use the GetsCleanedUp interface will be cleaned.
      */
     'models' => [
-        // App\NewsItem::class,
+        // App\LogItem::class,
     ],
 
 ];
@@ -86,7 +86,7 @@ use Spatie\ModelCleanup\GetsCleanedUp;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
-class NewsItem extends Model implements GetsCleanedUp
+class LogItem extends Model implements GetsCleanedUp
 {
     ...
     
