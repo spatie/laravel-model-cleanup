@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\DatabaseCleanup\Test;
+namespace Spatie\ModelCleanup\Test;
 
-use Spatie\DatabaseCleanup\Test\Models\CleanableItem;
-use Spatie\DatabaseCleanup\Test\Models\UncleanableItem;
+use Spatie\ModelCleanup\Test\Models\CleanableItem;
+use Spatie\ModelCleanup\Test\Models\UncleanableItem;
 use Illuminate\Contracts\Console\Kernel;
 
-class DatabaseCleanupTest extends TestCase
+class ModelCleanupTest extends TestCase
 {
     /** @test */
     public function it_can_delete_expired_records_from_a_database()
@@ -23,7 +23,7 @@ class DatabaseCleanupTest extends TestCase
     {
         $this->assertCount(20, CleanableItem::all());
 
-        $this->app['config']->set('laravel-database-cleanup',
+        $this->app['config']->set('laravel-model-cleanup',
             [
                 'models' => [CleanableItem::class],
                 'directories' => [],
@@ -60,7 +60,7 @@ class DatabaseCleanupTest extends TestCase
 
     protected function setConfigThatCleansUpDirectory()
     {
-        $this->app['config']->set('laravel-database-cleanup',
+        $this->app['config']->set('laravel-model-cleanup',
             [
                 'models' => [],
                 'directories' => [__DIR__.'/Models'],

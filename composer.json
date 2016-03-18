@@ -1,11 +1,11 @@
 {
-    "name": "spatie/laravel-database-cleanup",
-    "description": "This package deletes expired records in a database.",
+    "name": "spatie/laravel-model-cleanup",
+    "description": "This package deletes unneeded records in a database.",
     "keywords": [
         "spatie",
-        "laravel-database-cleanup"
+        "laravel-model-cleanup"
     ],
-    "homepage": "https://github.com/spatie/laravel-database-cleanup",
+    "homepage": "https://github.com/spatie/laravel-model-cleanup",
     "license": "MIT",
     "authors": [
         {
@@ -33,12 +33,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\DatabaseCleanup\\": "src"
+            "Spatie\\ModelCleanup\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\DatabaseCleanup\\Test\\": "tests"
+            "Spatie\\ModelCleanup\\Test\\": "tests"
         }
     },
     "scripts": {

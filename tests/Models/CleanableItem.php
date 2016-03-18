@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\DatabaseCleanup\Test\Models;
+namespace Spatie\ModelCleanup\Test\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\DatabaseCleanup\GetsCleanedUp;
+use Spatie\ModelCleanup\GetsCleanedUp;
 use Carbon\Carbon;
 
 class CleanableItem extends Model implements GetsCleanedUp

@@ -1,12 +1,12 @@
 <?php
 
-namespace Spatie\DatabaseCleanup\Test;
+namespace Spatie\ModelCleanup\Test;
 
 use Carbon\Carbon;
 use Illuminate\Database\Schema\Blueprint;
-use Spatie\DatabaseCleanup\DatabaseCleanupServiceProvider;
-use Spatie\DatabaseCleanup\Test\Models\CleanableItem;
-use Spatie\DatabaseCleanup\Test\Models\UncleanableItem;
+use Spatie\ModelCleanup\ModelCleanupServiceProvider;
+use Spatie\ModelCleanup\Test\Models\CleanableItem;
+use Spatie\ModelCleanup\Test\Models\UncleanableItem;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -18,7 +18,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function getPackageProviders($app)
     {
-        return [DatabaseCleanupServiceProvider::class];
+        return [ModelCleanupServiceProvider::class];
     }
 
     public function getEnvironmentSetUp($app)

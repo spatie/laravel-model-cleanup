@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\DatabaseCleanup;
+namespace Spatie\ModelCleanup;
 
 use Illuminate\Database\Eloquent\Builder;
 

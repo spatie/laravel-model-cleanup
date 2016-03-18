@@ -1,6 +1,6 @@
 # Changelog
 
-All Notable changes to `laravel-database-cleanup` will be documented in this file
+All Notable changes to `laravel-model-cleanup` will be documented in this file
 
 ## NEXT - YYYY-MM-DD
 

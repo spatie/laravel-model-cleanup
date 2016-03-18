@@ -1,10 +1,10 @@
 <?php
 
-namespace Spatie\DatabaseCleanup;
+namespace Spatie\ModelCleanup;
 
 use Illuminate\Support\ServiceProvider;
 
-class DatabaseCleanupServiceProvider extends ServiceProvider
+class ModelCleanupServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -12,7 +12,7 @@ class DatabaseCleanupServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/laravel-database-cleanup.php' => config_path('laravel-database-cleanup.php'),
+            __DIR__.'/../config/laravel-model-cleanup.php' => config_path('laravel-model-cleanup.php'),
         ], 'config');
     }
 
@@ -21,7 +21,7 @@ class DatabaseCleanupServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/laravel-database-cleanup.php', 'laravel-database-cleanup');
+        $this->mergeConfigFrom(__DIR__.'/../config/laravel-model-cleanup.php', 'laravel-model-cleanup');
 
         $this->app->bind('command.clean:models', CleanUpModelsCommand::class);
 

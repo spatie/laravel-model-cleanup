@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\DatabaseCleanup;
+namespace Spatie\ModelCleanup;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -47,12 +47,12 @@ class CleanUpModelsCommand extends Command
 
     protected function getModelsThatShouldBeCleanedUp() : Collection
     {
-        $directories = config('laravel-database-cleanup.directories');
+        $directories = config('laravel-model-cleanup.directories');
 
         $modelsFromDirectories = $this->getAllModelsOfEachDirectory($directories);
 
         $cleanableModels = $modelsFromDirectories
-            ->merge(collect(config('laravel-database-cleanup.models')))
+            ->merge(collect(config('laravel-model-cleanup.models')))
             ->flatten()
             ->filter(function ($modelClass) {
 
