@@ -49,46 +49,41 @@ class CleanUpModelsCommand extends Command
     {
         $directories = config('laravel-model-cleanup.directories');
 
-        $modelsFromDirectories = $this->getAllModelsOfEachDirectory($directories);
+        $modelsFromDirectories = $this->getAllModelsFromEachDirectory($directories);
 
-        $cleanableModels = $modelsFromDirectories
+        return $modelsFromDirectories
             ->merge(collect(config('laravel-model-cleanup.models')))
-            ->flatten()
             ->filter(function ($modelClass) {
-
                 return in_array(GetsCleanedUp::class, class_implements($modelClass));
             });
-
-        return $cleanableModels;
     }
 
     protected function cleanUp(Collection $cleanableModels)
     {
         $cleanableModels->each(function (string $class) {
 
-            $query = $class::cleanUp($class::query());
-
-            $numberOfDeletedRecords = $query->delete();
+            $numberOfDeletedRecords = $class::cleanUp($class::query())->delete();
 
             $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$class}.");
 
         });
     }
 
-    protected function getAllModelsOfEachDirectory(array $directories) : Collection
+    protected function getAllModelsFromEachDirectory(array $directories) : Collection
     {
-        return collect($directories)->map(function ($directory) {
-
-            return $this->getClassNames($directory)->all();
-
-        });
+        return collect($directories)
+            ->map(function ($directory) {
+                return $this->getClassNamesInDirectory($directory)->all();
+            })
+            ->flatten();
     }
 
-    protected function getClassNames(string $directory) : Collection
+    protected function getClassNamesInDirectory(string $directory) : Collection
     {
         return collect($this->filesystem->files($directory))->map(function ($path) {
 
             return $this->getFullyQualifiedClassNameFromFile($path);
+
         });
     }
 
