@@ -31,6 +31,8 @@ class ModelCleanupTest extends TestCase
 
         $this->app->make(Kernel::class)->call('clean:models');
 
+        $this->expectsEvents(ModelCleanedEvent::class);
+
         $this->assertCount(10, CleanableItem::all());
     }
 
@@ -43,6 +45,8 @@ class ModelCleanupTest extends TestCase
 
         $this->app->make(Kernel::class)->call('clean:models');
 
+        $this->expectsEvents(ModelCleanedEvent::class);
+
         $this->assertCount(10, CleanableItem::all());
     }
 
@@ -54,6 +58,8 @@ class ModelCleanupTest extends TestCase
         $this->setConfigThatCleansUpDirectory();
 
         $this->app->make(Kernel::class)->call('clean:models');
+
+        $this->doesntExpectEvents(ModelCleanedEvent::class);
 
         $this->assertCount(10, UncleanableItem::all());
     }

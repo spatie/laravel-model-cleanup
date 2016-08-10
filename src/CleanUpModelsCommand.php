@@ -64,6 +64,11 @@ class CleanUpModelsCommand extends Command
 
             $numberOfDeletedRecords = $class::cleanUp($class::query())->delete();
 
+            if($numberOfDeletedRecords)
+            {
+                event(new ModelCleanedEvent($class, $numberOfDeletedRecords));
+            }
+
             $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$class}.");
 
         });
@@ -110,4 +115,5 @@ class CleanUpModelsCommand extends Command
             })
             ->first();
     }
+
 }
