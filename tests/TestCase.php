@@ -7,13 +7,22 @@ use Illuminate\Database\Schema\Blueprint;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
 use Spatie\ModelCleanup\Test\Models\CleanableItem;
 use Spatie\ModelCleanup\Test\Models\UncleanableItem;
+use Event;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
+    /** @var array  */
+    protected $firedEvents = [];
+
     public function setUp()
     {
         parent::setUp();
+
         $this->setUpDatabase($this->app);
+
+        Event::listen('*', function ($event) {
+            $this->firedEvents[] = $event;
+        });
     }
 
     protected function getPackageProviders($app)
@@ -69,5 +78,14 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
                 'created_at' => Carbon::now()->subYear(1)->subDays(7),
             ]);
         }
+    }
+
+    public function getFiredEvent($eventClassName)
+    {
+        return collect($this->firedEvents)
+            ->filter(function ($event) use ($eventClassName) {
+                return $event instanceof $eventClassName;
+            })
+            ->first();
     }
 }

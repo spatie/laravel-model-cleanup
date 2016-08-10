@@ -119,6 +119,11 @@ protected function schedule(Schedule $schedule)
 }
 ```
 
+## Events
+
+After the model has been cleaned `Spatie\ModelCleanup\ModelWasCleanedUp` will be fired (even if there were no records deleted).
+It has two public properties: `modelClass` and `numberOfDeletedRecords`.
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.

@@ -60,16 +60,13 @@ class CleanUpModelsCommand extends Command
 
     protected function cleanUp(Collection $cleanableModels)
     {
-        $cleanableModels->each(function (string $class) {
+        $cleanableModels->each(function (string $modelClass) {
 
-            $numberOfDeletedRecords = $class::cleanUp($class::query())->delete();
+            $numberOfDeletedRecords = $modelClass::cleanUp($modelClass::query())->delete();
 
-            if($numberOfDeletedRecords)
-            {
-                event(new ModelCleanedEvent($class, $numberOfDeletedRecords));
-            }
+            event(new ModelWasCleanedUp($modelClass, $numberOfDeletedRecords));
 
-            $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$class}.");
+            $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
 
         });
     }
@@ -115,5 +112,4 @@ class CleanUpModelsCommand extends Command
             })
             ->first();
     }
-
 }
