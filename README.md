@@ -24,7 +24,7 @@ class LogItem extends Model implements GetsCleanedUp
     
      public static function cleanUp(Builder $query) : Builder
      {
-        //delete up all records older than a year
+        // Delete all records older than a year
         return $query->where('created_at', '<', Carbon::now()->subYear());
      }
 }
