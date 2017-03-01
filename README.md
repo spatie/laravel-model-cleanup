@@ -87,7 +87,7 @@ return [
 All models that you want to clean up must implement the `GetsCleanedUp`-interface. In the required
 `cleanUp`-method you can specify a query that selects the records that should be deleted.
 
-Let's say you have a model called `NewsItem`, that you would like to  cleaned up. In this case your model could look like this:
+Let's say you have a model called `LogItem`, that you would like to  cleaned up. In this case your model could look like this:
 
 ``` php
 use Spatie\ModelCleanup\GetsCleanedUp;
