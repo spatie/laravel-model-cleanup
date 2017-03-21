@@ -84,7 +84,11 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     {
         return collect($this->firedEvents)
             ->filter(function ($event) use ($eventClassName) {
-                return $event instanceof $eventClassName;
+                if ($event instanceof $eventClassName) {
+                    return true;
+                };
+
+                return $event == $eventClassName;
             })
             ->first();
     }

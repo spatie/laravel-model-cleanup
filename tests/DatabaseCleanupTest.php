@@ -59,48 +59,6 @@ class DatabaseCleanupTest extends TestCase
         $this->assertCount(10, UncleanableItem::all());
     }
 
-    /** @test */
-    public function it_will_fire_off_an_event_when_a_model_has_been_cleaned()
-    {
-        $this->assertCount(20, CleanableItem::all());
-
-        $this->app['config']->set('laravel-model-cleanup',
-            [
-                'models' => [CleanableItem::class],
-                'directories' => [],
-
-            ]);
-
-        $this->app->make(Kernel::class)->call('clean:models');
-
-        $firedEvent = $this->getFiredEvent(ModelWasCleanedUp::class);
-
-        $this->assertInstanceOf(ModelWasCleanedUp::class, $firedEvent);
-
-        $this->assertSame(10, $firedEvent->numberOfDeletedRecords);
-    }
-
-    /** @test */
-    public function it_will_fire_off_an_event_when_a_model_has_been_cleaned_even_if_no_records_were_deleted()
-    {
-        CleanableItem::truncate();
-
-        $this->app['config']->set('laravel-model-cleanup',
-            [
-                'models' => [CleanableItem::class],
-                'directories' => [],
-
-            ]);
-
-        $this->app->make(Kernel::class)->call('clean:models');
-
-        $firedEvent = $this->getFiredEvent(ModelWasCleanedUp::class);
-
-        $this->assertInstanceOf(ModelWasCleanedUp::class, $firedEvent);
-
-        $this->assertSame(0, $firedEvent->numberOfDeletedRecords);
-    }
-
     protected function setConfigThatCleansUpDirectory()
     {
         $this->app['config']->set('laravel-model-cleanup',

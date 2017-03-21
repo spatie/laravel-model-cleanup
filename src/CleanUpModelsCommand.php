@@ -6,8 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
-use ClassPreloader\Parser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 
 class CleanUpModelsCommand extends Command
