@@ -47,12 +47,12 @@ class CleanUpModelsCommand extends Command
 
     protected function getModelsThatShouldBeCleanedUp() : Collection
     {
-        $directories = config('laravel-model-cleanup.directories');
+        $directories = config('model-cleanup.directories');
 
         $modelsFromDirectories = $this->getAllModelsFromEachDirectory($directories);
 
         return $modelsFromDirectories
-            ->merge(collect(config('laravel-model-cleanup.models')))
+            ->merge(collect(config('model-cleanup.models')))
             ->filter(function ($modelClass) {
                 return in_array(GetsCleanedUp::class, class_implements($modelClass));
             });

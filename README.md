@@ -38,7 +38,7 @@ You're free to use this package (it's [MIT-licensed](LICENSE.md)), but if it mak
 
 Our address is: Spatie, Samberstraat 69D, 2060 Antwerp, Belgium.
 
-The best postcards are published [on our website](https://spatie.be/en/opensource/postcards).
+All postcards are published [on our website](https://spatie.be/en/opensource/postcards).
 
 ## Installation
 
@@ -47,15 +47,6 @@ You can install the package via composer:
 composer require spatie/laravel-model-cleanup
 ```
 
-Next up, the service provider must be registered:
-
-```php
-'providers' => [
-    ...
-    Spatie\ModelCleanup\ModelCleanupServiceProvider::class,
-
-];
-```
 Next, you must publish the config file:
 
 ```bash

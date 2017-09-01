@@ -24,7 +24,7 @@ class DatabaseCleanupTest extends TestCase
     {
         $this->assertCount(20, CleanableItem::all());
 
-        $this->app['config']->set('laravel-model-cleanup',
+        $this->app['config']->set('model-cleanup',
             [
                 'models' => [CleanableItem::class],
                 'directories' => [],
@@ -61,7 +61,7 @@ class DatabaseCleanupTest extends TestCase
 
     protected function setConfigThatCleansUpDirectory()
     {
-        $this->app['config']->set('laravel-model-cleanup',
+        $this->app['config']->set('model-cleanup',
             [
                 'models' => [],
                 'directories' => [__DIR__.'/Models'],
