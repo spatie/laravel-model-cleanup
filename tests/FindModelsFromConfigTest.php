@@ -2,11 +2,8 @@
 
 namespace Spatie\ModelCleanup\Test;
 
-use Spatie\ModelCleanup\ModelWasCleanedUp;
 use Spatie\ModelCleanup\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Test\Models\CleanableItem;
-use Spatie\ModelCleanup\Test\Models\UncleanableItem;
-use Illuminate\Contracts\Console\Kernel;
 
 class FindModelsFromConfigTest extends TestCase
 {
