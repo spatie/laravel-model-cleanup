@@ -86,6 +86,10 @@ class CleanUpModelsCommand extends Command
 
             return $this->getFullyQualifiedClassNameFromFile($path);
 
+        })->filter(function (string $className) {
+
+            return !empty($className);
+
         });
     }
 
@@ -110,6 +114,6 @@ class CleanUpModelsCommand extends Command
             ->map(function (Class_ $statement) {
                 return $statement->namespacedName->toString();
             })
-            ->first();
+            ->first() ?? '';
     }
 }

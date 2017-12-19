@@ -26,8 +26,8 @@ class DatabaseCleanupTest extends TestCase
 
         $this->app['config']->set('model-cleanup',
             [
-                'models' => [CleanableItem::class],
                 'directories' => [],
+                'models' => [CleanableItem::class],
             ]);
 
         $this->app->make(Kernel::class)->call('clean:models');
@@ -63,8 +63,8 @@ class DatabaseCleanupTest extends TestCase
     {
         $this->app['config']->set('model-cleanup',
             [
-                'models' => [],
                 'directories' => [__DIR__.'/Models'],
+                'models' => [],
             ]);
     }
 }
