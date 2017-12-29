@@ -9,7 +9,7 @@
 
 This package will clean up unneeded records for your Eloquent models. 
 
-The only things you have to do is let your models implement the `GetsCleanedUp`-interface and scheduled a command that performs the cleanup.
+The only things you have to do is let your models implement the `GetsCleanedUp`-interface and schedule a command that performs the cleanup.
 
 Here's a quick example of a model that implements `GetsCleanedUp`:
 
