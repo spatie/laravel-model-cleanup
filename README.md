@@ -43,7 +43,7 @@ Next, you must publish the config file:
 php artisan vendor:publish --provider="Spatie\ModelCleanup\ModelCleanupServiceProvider"
 ```
 
-This is the content of the published config file `laravel-model-cleanup.php`.
+This is the content of the published config file `model-cleanup.php`.
 ```php
 return [
 
