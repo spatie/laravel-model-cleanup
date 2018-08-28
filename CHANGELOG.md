@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-model-cleanup` will be documented in this file
 
+## 2.0.3 - 2018-08-28
+
+- add support for Laravel 5.7
+
 ## 2.0.2 - 2018-02-08
 
 - Support Laravel 5.6
