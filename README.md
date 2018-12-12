@@ -65,6 +65,9 @@ return [
 ```
 
 ## Usage
+
+### Configure models to remove
+
 All models that you want to clean up must implement the `GetsCleanedUp`-interface. In the required
 `cleanUp`-method you can specify a query that selects the records that should be deleted.
 
@@ -79,15 +82,47 @@ class LogItem extends Model implements GetsCleanedUp
 {
     ...
     
-     public static function cleanUp(Builder $query) : Builder
-     {
+    public static function cleanUp(Builder $query) : Builder
+    {
         return $query->where('created_at', '<', Carbon::now()->subYear());
-     }
+    }
     
 }
 ```
 
 When running the console command `clean:models` all newsItems older than a year will be deleted.
+
+### Configure models to forceRemove
+
+All models that use SoftDeletes function that you want to clean up completly from the database must implement the `GetsForcedCleanedUp`-interface. In the required
+`cleanUp`-method you can specify a query that selects the records that should be forceDeleted.
+
+Let's say you have a model called `LogItem`, that you would like to  cleaned up. In this case your model could look like this:
+
+``` php
+use Spatie\ModelCleanup\GetsCleanedUp;
+use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class LogItem extends Model implements GetsForcedCleanedUp
+{
+    use SoftDeletes;
+    ...
+    
+    public static function cleanUp(Builder $query) : Builder
+    {
+        return $query->onlyTrashed()->where('deleted_at', '<', Carbon::now()->subDay());
+    }
+    
+}
+```
+
+When running the console command `clean:models` all newsItems deleted before than a year will be deleted completly from the database.
+
+### Command 
+
+When running the console command `clean:models` all the items on cleanUp will be deleted.
 
 This command can be scheduled in Laravel's console kernel.
 

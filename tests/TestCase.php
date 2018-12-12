@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
 use Spatie\ModelCleanup\Test\Models\CleanableItem;
+use Spatie\ModelCleanup\Test\Models\ForceCleanableItem;
 use Spatie\ModelCleanup\Test\Models\UncleanableItem;
 use Event;
 
@@ -50,6 +51,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->timestamp('created_at');
         });
 
+        $app['db']->connection()->getSchemaBuilder()->create('forced_cleanable_items', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
+            $table->timestamp('deleted_at');
+        });
+
         $app['db']->connection()->getSchemaBuilder()->create('uncleanable_items', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('created_at');
@@ -72,6 +80,16 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
             CleanableItem::create([
                 'created_at' => Carbon::now()->subMonth(),
+            ]);
+
+            ForceCleanableItem::create([
+                'created_at' => Carbon::now()->subMonth(),
+                'deleted_at' => Carbon::now()->subDays(2)
+            ]);
+
+            ForceCleanableItem::create([
+                'created_at' => Carbon::now()->subMonth(),
+                'deleted_at' => Carbon::now()
             ]);
 
             UncleanableItem::create([
