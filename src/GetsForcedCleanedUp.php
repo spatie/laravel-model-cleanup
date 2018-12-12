@@ -14,5 +14,5 @@ interface GetsForcedCleanedUp
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public static function cleanUp(Builder $query) : Builder;
+    public static function forceCleanUp(Builder $query) : Builder;
 }

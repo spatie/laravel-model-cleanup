@@ -92,7 +92,7 @@ class CleanUpModelsCommand extends Command
     {
         $cleanableModels->each(function (string $modelClass) {
 
-            $numberOfDeletedRecords = $modelClass::cleanUp($modelClass::query())->forceDelete();
+            $numberOfDeletedRecords = $modelClass::forceCleanUp($modelClass::query())->forceDelete();
 
             event(new ModelWasCleanedUp($modelClass, $numberOfDeletedRecords));
 

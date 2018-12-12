@@ -15,7 +15,7 @@ class ForceCleanableItem extends Model implements GetsForcedCleanedUp
     protected $table = 'forced_cleanable_items';
     protected $guarded = [];
 
-    public static function cleanUp(Builder $query) : Builder
+    public static function forceCleanUp(Builder $query) : Builder
     {
         return $query->onlyTrashed()->where('deleted_at', '<', Carbon::now()->subDay());
     }

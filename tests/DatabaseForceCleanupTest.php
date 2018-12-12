@@ -13,7 +13,7 @@ class DatabaseForceCleanupTest extends TestCase
     {
         $this->assertEquals(20, ForceCleanableItem::withTrashed()->count());
 
-        ForceCleanableItem::cleanUp(ForceCleanableItem::query())->forceDelete();
+        ForceCleanableItem::forceCleanUp(ForceCleanableItem::query())->forceDelete();
 
         $this->assertEquals(10, ForceCleanableItem::withTrashed()->count());
     }
