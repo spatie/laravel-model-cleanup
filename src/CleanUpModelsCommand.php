@@ -38,9 +38,13 @@ class CleanUpModelsCommand extends Command
     {
         $this->comment('Cleaning models...');
 
+        // Cleaning Normal models
         $cleanableModels = $this->getModelsThatShouldBeCleanedUp();
-
         $this->cleanUp($cleanableModels);
+
+        // Cleaning softdeletes models
+        $cleanableModels = $this->getModelsThatShouldBeForcedCleanedUp();
+        $this->forceCleanUp($cleanableModels);
 
         $this->comment('All done!');
     }
@@ -58,11 +62,37 @@ class CleanUpModelsCommand extends Command
             });
     }
 
+    protected function getModelsThatShouldBeForcedCleanedUp() : Collection
+    {
+        $directories = config('model-cleanup.directories');
+
+        $modelsFromDirectories = $this->getAllModelsFromEachDirectory($directories);
+
+        return $modelsFromDirectories
+            ->merge(collect(config('model-cleanup.models')))
+            ->filter(function ($modelClass) {
+                return in_array(GetsForcedCleanedUp::class, class_implements($modelClass));
+            });
+    }
+
     protected function cleanUp(Collection $cleanableModels)
     {
         $cleanableModels->each(function (string $modelClass) {
 
             $numberOfDeletedRecords = $modelClass::cleanUp($modelClass::query())->delete();
+
+            event(new ModelWasCleanedUp($modelClass, $numberOfDeletedRecords));
+
+            $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
+
+        });
+    }
+
+    protected function forceCleanUp(Collection $cleanableModels)
+    {
+        $cleanableModels->each(function (string $modelClass) {
+
+            $numberOfDeletedRecords = $modelClass::forceCleanUp($modelClass::query())->forceDelete();
 
             event(new ModelWasCleanedUp($modelClass, $numberOfDeletedRecords));
 
