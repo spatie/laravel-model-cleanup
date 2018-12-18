@@ -93,7 +93,7 @@ When running the console command `clean:models` all newsItems older than a year 
 
 ### Configure models to forceRemove
 
-All models that use SoftDeletes function that you want to clean up completly from the database must implement the `GetsForcedCleanedUp`-interface. In the required
+All models that use SoftDeletes function that you want to clean up completely from the database must implement the `GetsForcedCleanedUp`-interface. In the required
 `cleanUp`-method you can specify a query that selects the records that should be forceDeleted.
 
 Let's say you have a model called `LogItem`, that you would like to  cleaned up. In this case your model could look like this:
@@ -117,7 +117,7 @@ class LogItem extends Model implements GetsForcedCleanedUp
 }
 ```
 
-When running the console command `clean:models` all newsItems deleted before than a year will be deleted completly from the database.
+When running the console command `clean:models` all newsItems deleted before than a year will be deleted completely from the database.
 
 ### Command 
 
