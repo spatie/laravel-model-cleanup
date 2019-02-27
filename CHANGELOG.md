@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-model-cleanup` will be documented in this file
 
+## 2.1.1 - 2018-02-27
+
+- add support for Laravel 5.8
+
 ## 2.1.0 - 2018-12-13
 
 - add support for `SoftDeletes`
