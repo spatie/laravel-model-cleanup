@@ -15,7 +15,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /** @var array  */
     protected $firedEvents = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
