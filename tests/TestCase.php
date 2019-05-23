@@ -7,6 +7,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
 use Spatie\ModelCleanup\Test\Models\CleanableItem;
 use Spatie\ModelCleanup\Test\Models\ForceCleanableItem;
+use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryCleanableItem;
+use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryUncleanableItem;
 use Spatie\ModelCleanup\Test\Models\UncleanableItem;
 use Event;
 
@@ -58,7 +60,17 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->timestamp('deleted_at');
         });
 
+        $app['db']->connection()->getSchemaBuilder()->create('sub_dir_cleanable_items', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamp('created_at');
+        });
+
         $app['db']->connection()->getSchemaBuilder()->create('uncleanable_items', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamp('created_at');
+        });
+
+        $app['db']->connection()->getSchemaBuilder()->create('sub_dir_uncleanable_items', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('created_at');
         });
@@ -87,12 +99,24 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
                 'deleted_at' => Carbon::now()->subDays(2)
             ]);
 
+            SubDirectoryCleanableItem::create([
+                'created_at' => Carbon::now()->subYear(1)->subDays(7),
+            ]);
+
+            SubDirectoryCleanableItem::create([
+                'created_at' => Carbon::now()->subMonth(),
+            ]);
+
             ForceCleanableItem::create([
                 'created_at' => Carbon::now()->subMonth(),
                 'deleted_at' => Carbon::now()
             ]);
 
             UncleanableItem::create([
+                'created_at' => Carbon::now()->subYear(1)->subDays(7),
+            ]);
+
+            SubDirectoryUncleanableItem::create([
                 'created_at' => Carbon::now()->subYear(1)->subDays(7),
             ]);
         }

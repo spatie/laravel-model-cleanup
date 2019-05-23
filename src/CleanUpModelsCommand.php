@@ -112,7 +112,7 @@ class CleanUpModelsCommand extends Command
 
     protected function getClassNamesInDirectory(string $directory) : Collection
     {
-        return collect($this->filesystem->files($directory))->map(function ($path) {
+        return collect($this->filesystem->allFiles($directory))->map(function ($path) {
 
             return $this->getFullyQualifiedClassNameFromFile($path);
 
