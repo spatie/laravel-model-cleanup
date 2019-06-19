@@ -4,6 +4,7 @@ namespace Spatie\ModelCleanup\Test;
 
 use Spatie\ModelCleanup\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Test\Models\CleanableItem;
+use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryCleanableItem;
 
 class FindModelsFromConfigTest extends TestCase
 {
@@ -31,6 +32,7 @@ class FindModelsFromConfigTest extends TestCase
         $classNames = $method->invokeArgs($cmd, ["./tests/Models"]);
 
         $this->assertContains(CleanableItem::class, $classNames);
+        $this->assertContains(SubDirectoryCleanableItem::class, $classNames);
 
         $this->assertNotContains(null, $classNames);
     }
