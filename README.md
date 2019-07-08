@@ -109,7 +109,7 @@ class LogItem extends Model implements GetsForcedCleanedUp
     use SoftDeletes;
     ...
     
-    public static function cleanUp(Builder $query) : Builder
+    public static function forceCleanUp(Builder $query) : Builder
     {
         return $query->onlyTrashed()->where('deleted_at', '<', Carbon::now()->subDay());
     }
