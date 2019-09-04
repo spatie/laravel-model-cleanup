@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-model-cleanup` will be documented in this file
 
+## 2.3.0 - 2019-09-04
+
+- add support for Laravel 6
+
 ## 2.2.1 - 2019-06-19
 
 - look for models in subdirs
