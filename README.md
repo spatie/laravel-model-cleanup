@@ -43,6 +43,7 @@ php artisan vendor:publish --provider="Spatie\ModelCleanup\ModelCleanupServicePr
 ```
 
 This is the content of the published config file `model-cleanup.php`.
+
 ```php
 return [
 
@@ -89,11 +90,11 @@ class LogItem extends Model implements GetsCleanedUp
 }
 ```
 
-When running the console command `clean:models` all newsItems older than a year will be deleted.
+When running the console command `clean:models` all logItems older than a year will be deleted.
 
 ### Configure models to forceRemove
 
-All models that use SoftDeletes function that you want to clean up completly from the database must implement the `GetsForcedCleanedUp`-interface. In the required
+All models that have the SoftDeletes trait that you want to clean up completly from the database must implement the `GetsForcedCleanedUp`-interface. In the required
 `cleanUp`-method you can specify a query that selects the records that should be forceDeleted.
 
 Let's say you have a model called `LogItem`, that you would like to  cleaned up. In this case your model could look like this:
@@ -111,13 +112,13 @@ class LogItem extends Model implements GetsForcedCleanedUp
     
     public static function cleanUp(Builder $query) : Builder
     {
-        return $query->onlyTrashed()->where('deleted_at', '<', Carbon::now()->subDay());
+        return $query->onlyTrashed()->where('deleted_at', '<', Carbon::now()->subYear());
     }
     
 }
 ```
 
-When running the console command `clean:models` all newsItems deleted before than a year will be deleted completly from the database.
+When running the console command `clean:models` all logItems that were deleted more than a year from `Carbon::now` will be deleted completly from the database.
 
 ### Command 
 
@@ -136,12 +137,13 @@ protected function schedule(Schedule $schedule)
 
 ## Events
 
-After the model has been cleaned `Spatie\ModelCleanup\ModelWasCleanedUp` will be fired (even if there were no records deleted).
+After the model has been cleaned `Spatie\ModelCleanup\ModelWasCleanedUp` will be fired even if there were no records deleted.
+
 It has two public properties: `modelClass` and `numberOfDeletedRecords`.
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Testing
 
