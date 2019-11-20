@@ -116,7 +116,7 @@ class CleanUpModelsCommand extends Command
             ? $this->filesystem->allFiles($directory)
             : $this->filesystem->files($directory);
 
-        return collect($files)->map(function ($path) {
+        return collect($files)->map(function (string $path) {
 
             return $this->getFullyQualifiedClassNameFromFile($path);
 
