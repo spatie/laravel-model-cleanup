@@ -85,12 +85,27 @@ class DatabaseCleanupTest extends TestCase
         $this->assertCount(10, SubDirectoryUncleanableItem::all());
     }
 
-    protected function setConfigThatCleansUpDirectory()
+    /** @test */
+    public function it_does_not_delete_models_recursively_when_recursive_config_option_is_false()
+    {
+        $this->assertCount(20, CleanableItem::all());
+        $this->assertCount(20, SubDirectoryCleanableItem::all());
+
+        $this->setConfigThatCleansUpDirectory(false);
+
+        $this->app->make(Kernel::class)->call('clean:models');
+
+        $this->assertCount(10, CleanableItem::all());
+        $this->assertCount(20, SubDirectoryCleanableItem::all());
+    }
+
+    protected function setConfigThatCleansUpDirectory($recursive = true)
     {
         $this->app['config']->set('model-cleanup',
             [
                 'directories' => [__DIR__.'/Models'],
                 'models' => [],
+                'recursive' => $recursive,
             ]);
     }
 }
