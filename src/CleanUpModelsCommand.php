@@ -112,11 +112,9 @@ class CleanUpModelsCommand extends Command
 
     protected function getClassNamesInDirectory(string $directory) : Collection
     {
-        if (config('model-cleanup.recursive', true)) {
-            $files = $this->filesystem->allFiles($directory);
-        } else {
-            $files = $this->filesystem->files($directory);
-        }
+        $files = config('model-cleanup.recursive', true)
+            ? $this->filesystem->allFiles($directory)
+            : $this->filesystem->files($directory);
 
         return collect($files)->map(function ($path) {
 
