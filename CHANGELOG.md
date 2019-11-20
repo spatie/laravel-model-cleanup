@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-model-cleanup` will be documented in this file
 
+## 2.4.0 - 2019-11-20
+
+- make recursive directory search configurable (#29)
+
 ## 2.3.0 - 2019-09-04
 
 - add support for Laravel 6
