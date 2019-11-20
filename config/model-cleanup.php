@@ -17,8 +17,8 @@ return [
     ],
 
     /*
-     * Specify whether to search the configured `directories` recursively. Set to false to only search for models
-     * directly inside the specified paths
+     * Specify whether to search the configured `directories` recursively.
+     * Set to false to only search for models directly inside the specified paths
      */
     'recursive' => true,
 ];
