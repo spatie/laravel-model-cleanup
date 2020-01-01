@@ -29,16 +29,6 @@ class LogItem extends Model implements GetsCleanedUp
 }
 ```
 
-## Jump To
-
-* [Installation](#installation)
-* [Usage](#usage)
-    * [Configure models to remove](#configure-models-to-remove)
-    * [Configure models to forceRemove](#configure-models-to-forceremove)
-    * [Command](#command)
-* [Events](#events)
-* [Changelog](CHANGELOG.md)
-
 ## Installation
 
 You can install the package via composer:
