@@ -29,6 +29,16 @@ class LogItem extends Model implements GetsCleanedUp
 }
 ```
 
+## Jump To
+
+* [Installation](#installation)
+* [Usage](#usage)
+    * [Configure models to remove](#configure-models-to-remove)
+    * [Configure models to forceRemove](#configure-models-to-forceremove)
+    * [Command](#command)
+* [Events](#events)
+* [Changelog](CHANGELOG.md)
+
 ## Installation
 
 You can install the package via composer:
@@ -100,12 +110,12 @@ When running the console command `clean:models` all logItems older than a year w
 ### Configure models to forceRemove
 
 All models that have the SoftDeletes trait that you want to clean up completly from the database must implement the `GetsForcedCleanedUp`-interface. In the required
-`cleanUp`-method you can specify a query that selects the records that should be forceDeleted.
+`forceCleanUp`-method you can specify a query that selects the records that should be forceDeleted.
 
 Let's say you have a model called `LogItem`, that you would like to  cleaned up. In this case your model could look like this:
 
 ``` php
-use Spatie\ModelCleanup\GetsCleanedUp;
+use Spatie\ModelCleanup\GetsForcedCleanedUp;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -115,9 +125,9 @@ class LogItem extends Model implements GetsForcedCleanedUp
     use SoftDeletes;
     ...
     
-    public static function cleanUp(Builder $query) : Builder
+    public static function forceCleanUp(Builder $query) : Builder
     {
-        return $query->onlyTrashed()->where('deleted_at', '<', Carbon::now()->subYear());
+        return $query->onlyTrashed()->where('deleted_at', '<', Carbon::now()->subDay());
     }
     
 }
