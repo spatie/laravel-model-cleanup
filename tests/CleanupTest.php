@@ -113,7 +113,7 @@ class CleanupTest extends TestCase
     /** @test */
     public function if_there_is_no_older_than_used_than_the_scope_can_target_any_record()
     {
-        TestModel::query()->whereDate('created_at','<>', '2020-01-01')->update(['status' => 'inactive']);
+        TestModel::query()->whereDate('created_at', '<>', '2020-01-01')->update(['status' => 'inactive']);
 
         $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
             $cleanupConfig
