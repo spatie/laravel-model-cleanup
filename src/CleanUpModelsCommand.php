@@ -38,7 +38,7 @@ class CleanUpModelsCommand extends Command
             ($cleanupConfig->scopeClosure)($query);
         }
 
-        $numberOfDeletedRecords =  $query->delete();
+        $numberOfDeletedRecords = $query->delete();
 
         event(new ModelCleanedUpEvent($model, $numberOfDeletedRecords));
 
