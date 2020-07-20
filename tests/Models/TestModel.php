@@ -2,21 +2,26 @@
 
 namespace Spatie\ModelCleanup\Test\Models;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
+use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\GetsCleanedUp;
 
 class TestModel extends Model implements GetsCleanedUp
 {
-    protected $table = 'cleanable_items';
+    protected $table = 'test_models';
 
     protected $guarded = [];
 
-    public $timestamps = false;
+    protected static $cleanupClosure;
 
-    public static function cleanUp(Builder $query) : Builder
+    public static function setCleanupConfigClosure(Closure $cleanupClosure)
     {
-        return $query->where('created_at', '<', Carbon::now()->subYear());
+        static::$cleanupClosure = $cleanupClosure;
+    }
+
+    public function cleanUp(CleanupConfig $config): void
+    {
+        (static::$cleanupClosure)($config);
     }
 }

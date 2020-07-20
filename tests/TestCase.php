@@ -3,15 +3,11 @@
 namespace Spatie\ModelCleanup\Test;
 
 use Carbon\Carbon;
-use Event;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
 use Spatie\ModelCleanup\Test\Models\TestModel;
-use Spatie\ModelCleanup\Test\Models\ForceCleanableItem;
-use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryCleanableItem;
-use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryUncleanableItem;
-use Spatie\ModelCleanup\Test\Models\UncleanableItem;
+use Spatie\TestTime\TestTime;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -20,6 +16,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         parent::setUp();
 
         $this->setUpDatabase($this->app);
+
+        TestTime::freeze('Y-m-d H:i:s', '2020-01-01 00:00:00');
     }
 
     protected function getPackageProviders($app)
@@ -40,9 +38,20 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function setUpDatabase($app)
     {
-      Schema::create('test_models', function (Blueprint $table) {
+        Schema::create('test_models', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('created_at');
+            $table->timestamp('updated_at');
         });
+    }
+
+    protected function assertModelsExistForDays(array $expectedDates)
+    {
+        $actualDates = TestModel::all()
+            ->pluck('created_at')
+            ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
+            ->toArray();
+
+        $this->assertEquals($expectedDates, $actualDates);
     }
 }

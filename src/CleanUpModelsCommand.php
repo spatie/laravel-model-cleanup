@@ -3,7 +3,6 @@
 namespace Spatie\ModelCleanup;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 
 class CleanUpModelsCommand extends Command
 {
@@ -13,28 +12,31 @@ class CleanUpModelsCommand extends Command
 
     public function handle()
     {
-        $this->comment('Cleaning models...');
+        $this->comment('Start cleaning models...');
 
         collect(config('model-cleanup.models'))
-            ->map(function (string $className) {
-                return new $className;
-            })
-            ->each(function (GetsCleanedUp $model) {
-                // delete stuff
-            });
-
+            ->map(fn (string $className) => new $className)
+            ->each(fn (GetsCleanedUp $model) => $this->cleanUp($model));
 
         $this->comment('All done!');
     }
 
-    protected function cleanUp(Collection $cleanableModels)
+    protected function cleanUp(GetsCleanedUp $model)
     {
-        $cleanableModels->each(function (string $modelClass) {
-            $numberOfDeletedRecords = $modelClass::cleanUp($modelClass::query())->delete();
+        $modelClass = get_class($model);
 
-            event(new ModelCleanedUp($modelClass, $numberOfDeletedRecords));
+        $this->info("Cleaning {$modelClass}...");
 
-            $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
-        });
+        $cleanupConfig = new CleanupConfig();
+
+        $model->cleanUp($cleanupConfig);
+
+        $numberOfDeletedRecords = $model::query()
+            ->where('created_at', '<', $cleanupConfig->olderThan->toDateTimeString())
+            ->delete();
+
+        event(new ModelCleanedUpEvent($model, $numberOfDeletedRecords));
+
+        $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
     }
 }

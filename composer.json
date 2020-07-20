@@ -29,7 +29,8 @@
         "friendsofphp/php-cs-fixer": "^2.16",
         "phpunit/phpunit": "^9.0",
         "orchestra/testbench":"^5.0",
-        "mockery/mockery": "^1.0"
+        "mockery/mockery": "^1.0",
+        "spatie/test-time": "^1.2"
     },
     "autoload": {
         "psr-4": {
