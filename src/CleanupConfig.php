@@ -12,7 +12,6 @@ namespace Spatie\ModelCleanup;
             ->stopWhen(function() {});
  */
 
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 
 class CleanupConfig
