@@ -2,9 +2,8 @@
 
 namespace Spatie\ModelCleanup\Test;
 
-use Spatie\ModelCleanup\ModelWasCleanedUp;
-use Spatie\ModelCleanup\Test\Models\ForceCleanableItem;
 use Illuminate\Contracts\Console\Kernel;
+use Spatie\ModelCleanup\Test\Models\ForceCleanableItem;
 
 class DatabaseForceCleanupTest extends TestCase
 {
@@ -23,11 +22,13 @@ class DatabaseForceCleanupTest extends TestCase
     {
         $this->assertEquals(20, ForceCleanableItem::withTrashed()->count());
 
-        $this->app['config']->set('model-cleanup',
+        $this->app['config']->set(
+            'model-cleanup',
             [
                 'directories' => [],
                 'models' => [ForceCleanableItem::class],
-            ]);
+            ]
+        );
 
         $this->app->make(Kernel::class)->call('clean:models');
 
@@ -48,10 +49,12 @@ class DatabaseForceCleanupTest extends TestCase
 
     protected function setConfigThatCleansUpDirectory()
     {
-        $this->app['config']->set('model-cleanup',
+        $this->app['config']->set(
+            'model-cleanup',
             [
                 'directories' => [__DIR__.'/Models'],
                 'models' => [],
-            ]);
+            ]
+        );
     }
 }

@@ -3,12 +3,12 @@
 namespace Spatie\ModelCleanup;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Collection;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeTraverser;
-use PhpParser\ParserFactory;
 use PhpParser\NodeVisitor\NameResolver;
+use PhpParser\ParserFactory;
 
 class CleanUpModelsCommand extends Command
 {
@@ -78,26 +78,22 @@ class CleanUpModelsCommand extends Command
     protected function cleanUp(Collection $cleanableModels)
     {
         $cleanableModels->each(function (string $modelClass) {
-
             $numberOfDeletedRecords = $modelClass::cleanUp($modelClass::query())->delete();
 
             event(new ModelWasCleanedUp($modelClass, $numberOfDeletedRecords));
 
             $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
-
         });
     }
 
     protected function forceCleanUp(Collection $cleanableModels)
     {
         $cleanableModels->each(function (string $modelClass) {
-
             $numberOfDeletedRecords = $modelClass::forceCleanUp($modelClass::query())->forceDelete();
 
             event(new ModelWasCleanedUp($modelClass, $numberOfDeletedRecords));
 
             $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
-
         });
     }
 
@@ -117,13 +113,9 @@ class CleanUpModelsCommand extends Command
             : $this->filesystem->files($directory);
 
         return collect($files)->map(function (string $path) {
-
             return $this->getFullyQualifiedClassNameFromFile($path);
-
         })->filter(function (string $className) {
-
-            return !empty($className);
-
+            return ! empty($className);
         });
     }
 

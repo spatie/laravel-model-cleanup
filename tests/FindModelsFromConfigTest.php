@@ -42,6 +42,7 @@ class FindModelsFromConfigTest extends TestCase
         $class = new \ReflectionClass($class);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
+
         return $method;
     }
 }

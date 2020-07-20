@@ -3,6 +3,7 @@
 namespace Spatie\ModelCleanup\Test;
 
 use Carbon\Carbon;
+use Event;
 use Illuminate\Database\Schema\Blueprint;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
 use Spatie\ModelCleanup\Test\Models\CleanableItem;
@@ -10,11 +11,10 @@ use Spatie\ModelCleanup\Test\Models\ForceCleanableItem;
 use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryCleanableItem;
 use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryUncleanableItem;
 use Spatie\ModelCleanup\Test\Models\UncleanableItem;
-use Event;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    /** @var array  */
+    /** @var array */
     protected $firedEvents = [];
 
     public function setUp(): void
@@ -96,7 +96,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
             ForceCleanableItem::create([
                 'created_at' => Carbon::now()->subMonth(),
-                'deleted_at' => Carbon::now()->subDays(2)
+                'deleted_at' => Carbon::now()->subDays(2),
             ]);
 
             SubDirectoryCleanableItem::create([
@@ -109,7 +109,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
             ForceCleanableItem::create([
                 'created_at' => Carbon::now()->subMonth(),
-                'deleted_at' => Carbon::now()
+                'deleted_at' => Carbon::now(),
             ]);
 
             UncleanableItem::create([

@@ -2,12 +2,11 @@
 
 namespace Spatie\ModelCleanup\Test;
 
-use Spatie\ModelCleanup\ModelWasCleanedUp;
+use Illuminate\Contracts\Console\Kernel;
 use Spatie\ModelCleanup\Test\Models\CleanableItem;
 use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryCleanableItem;
 use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryUncleanableItem;
 use Spatie\ModelCleanup\Test\Models\UncleanableItem;
-use Illuminate\Contracts\Console\Kernel;
 
 class DatabaseCleanupTest extends TestCase
 {
@@ -26,11 +25,13 @@ class DatabaseCleanupTest extends TestCase
     {
         $this->assertCount(20, CleanableItem::all());
 
-        $this->app['config']->set('model-cleanup',
+        $this->app['config']->set(
+            'model-cleanup',
             [
                 'directories' => [],
                 'models' => [CleanableItem::class],
-            ]);
+            ]
+        );
 
         $this->app->make(Kernel::class)->call('clean:models');
 
@@ -101,11 +102,13 @@ class DatabaseCleanupTest extends TestCase
 
     protected function setConfigThatCleansUpDirectory($recursive = true)
     {
-        $this->app['config']->set('model-cleanup',
+        $this->app['config']->set(
+            'model-cleanup',
             [
                 'directories' => [__DIR__.'/Models'],
                 'models' => [],
                 'recursive' => $recursive,
-            ]);
+            ]
+        );
     }
 }

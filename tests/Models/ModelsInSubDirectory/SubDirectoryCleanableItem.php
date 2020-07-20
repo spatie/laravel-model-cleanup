@@ -2,10 +2,10 @@
 
 namespace Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\ModelCleanup\GetsCleanedUp;
-use Carbon\Carbon;
 
 class SubDirectoryCleanableItem extends Model implements GetsCleanedUp
 {

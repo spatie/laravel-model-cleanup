@@ -2,10 +2,10 @@
 
 namespace Spatie\ModelCleanup\Test\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\ModelCleanup\GetsCleanedUp;
-use Carbon\Carbon;
 
 class CleanableItem extends Model implements GetsCleanedUp
 {
