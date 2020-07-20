@@ -14,10 +14,14 @@ namespace Spatie\ModelCleanup;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Closure;
+use Illuminate\Database\Query\Builder;
 
 class CleanupConfig
 {
     public ?CarbonInterface $olderThan = null;
+
+    public ?Closure $scopeClosure = null;
 
     /** TODO: consider adding parameter for column name */
     public function olderThanDays(int $numberOfDays): self
@@ -32,5 +36,10 @@ class CleanupConfig
         $this->olderThan = $olderThan;
 
         return $this;
+    }
+
+    public function scope(Closure $scopeClosure): void
+    {
+        $this->scopeClosure = $scopeClosure;
     }
 }

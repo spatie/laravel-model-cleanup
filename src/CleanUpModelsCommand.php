@@ -31,9 +31,14 @@ class CleanUpModelsCommand extends Command
 
         $model->cleanUp($cleanupConfig);
 
-        $numberOfDeletedRecords = $model::query()
-            ->where('created_at', '<', $cleanupConfig->olderThan->toDateTimeString())
-            ->delete();
+        $query = $model::query()
+            ->where('created_at', '<', $cleanupConfig->olderThan->toDateTimeString());
+
+        if ($cleanupConfig->scopeClosure) {
+            ($cleanupConfig->scopeClosure)($query);
+        }
+
+        $numberOfDeletedRecords =  $query->delete();
 
         event(new ModelCleanedUpEvent($model, $numberOfDeletedRecords));
 
