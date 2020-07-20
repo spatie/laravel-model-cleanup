@@ -37,8 +37,10 @@ class CleanupConfig
         return $this;
     }
 
-    public function scope(Closure $scopeClosure): void
+    public function scope(Closure $scopeClosure): self
     {
         $this->scopeClosure = $scopeClosure;
+
+        return $this;
     }
 }
