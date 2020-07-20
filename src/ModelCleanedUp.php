@@ -2,7 +2,7 @@
 
 namespace Spatie\ModelCleanup;
 
-class ModelWasCleanedUp
+class ModelCleanedUp
 {
     /**
      * Holds the model class name.

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\ModelCleanup\GetsCleanedUp;
 
-class CleanableItem extends Model implements GetsCleanedUp
+class TestModel extends Model implements GetsCleanedUp
 {
     protected $table = 'cleanable_items';
 
