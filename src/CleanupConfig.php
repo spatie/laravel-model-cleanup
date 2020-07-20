@@ -12,6 +12,7 @@ namespace Spatie\ModelCleanup;
             ->stopWhen(function() {});
  */
 
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 
 class CleanupConfig
@@ -22,6 +23,13 @@ class CleanupConfig
     public function olderThanDays(int $numberOfDays): self
     {
         $this->olderThan = now()->subDays($numberOfDays);
+
+        return $this;
+    }
+
+    public function olderThan(CarbonInterface $olderThan): self
+    {
+        $this->olderThan = $olderThan;
 
         return $this;
     }
