@@ -86,6 +86,49 @@ class CleanupTest extends TestCase
         ]);
     }
 
+    /** @test */
+    public function using_a_scope_will_not_delete_any_records_not_selected_by_older_than()
+    {
+        TestModel::query()->update(['status' => 'inactive']);
+
+        $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+            $cleanupConfig
+                ->olderThanDays(2)
+                ->scope(function (Builder $query) {
+                    $query->where('status', 'inactive');
+                });
+        });
+
+        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+
+        $this->assertModelsExistForDays([
+            '2020-01-03',
+            '2020-01-02',
+            '2020-01-01',
+            '2019-12-31',
+            '2019-12-30',
+        ]);
+    }
+
+    /** @test */
+    public function if_there_is_no_older_than_used_than_the_scope_can_target_any_record()
+    {
+        TestModel::query()->whereDate('created_at','<>', '2020-01-01')->update(['status' => 'inactive']);
+
+        $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+            $cleanupConfig
+                ->scope(function (Builder $query) {
+                    $query->where('status', 'inactive');
+                });
+        });
+
+        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+
+        $this->assertModelsExistForDays([
+            '2020-01-01',
+        ]);
+    }
+
     protected function useCleanupConfig(Closure $closure)
     {
         TestModel::setCleanupConfigClosure($closure);

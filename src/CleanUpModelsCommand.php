@@ -31,8 +31,11 @@ class CleanUpModelsCommand extends Command
 
         $model->cleanUp($cleanupConfig);
 
-        $query = $model::query()
-            ->where('created_at', '<', $cleanupConfig->olderThan->toDateTimeString());
+        $query = $model::query();
+
+        if ($cleanupConfig->olderThan) {
+            $query->where('created_at', '<', $cleanupConfig->olderThan->toDateTimeString());
+        }
 
         if ($cleanupConfig->scopeClosure) {
             ($cleanupConfig->scopeClosure)($query);
