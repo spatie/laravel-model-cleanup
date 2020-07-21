@@ -5,11 +5,15 @@ use Spatie\ModelCleanup\CleanupConfig;
 return [
 
     /*
-     * All models in this array that use the GetsCleanedUp interface will be cleaned.
+     * All models in this array that implement `Spatie\ModelCleanupGetsCleanedUp`
+     * will be cleaned.
      */
     'models' => [
-        // App\LogItem::class,
+        // App\Models\LogItem::class,
     ],
 
+    /*
+     * Here you can specify how models should be cleaned by default.
+     */
     'default_cleanup_config' => CleanupConfig::new(),
 ];
