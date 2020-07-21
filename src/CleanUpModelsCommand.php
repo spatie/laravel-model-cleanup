@@ -28,10 +28,7 @@ class CleanUpModelsCommand extends Command
 
         $this->info("Cleaning {$modelClass}...");
 
-        /** @var CleanupConfigFactory $cleanupConfigFactory */
-        $cleanupConfigFactory = app(CleanupConfigFactory::class);
-
-        $cleanupConfig = $cleanupConfigFactory->getCleanupConfig();
+        $cleanupConfig = app(CleanupConfigFactory::class)->getCleanupConfig();
 
         $model->cleanUp($cleanupConfig);
 
