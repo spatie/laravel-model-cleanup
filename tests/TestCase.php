@@ -48,7 +48,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function assertModelsExistForDays(array $expectedDates)
     {
-        $actualDates = TestModel::all()
+        $actualDates = TestModel::query()
+            ->latest()
             ->pluck('created_at')
             ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
             ->toArray();

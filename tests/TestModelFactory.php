@@ -3,6 +3,7 @@
 namespace Spatie\ModelCleanup\Test;
 
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Spatie\ModelCleanup\Test\Models\TestModel;
 
 class TestModelFactory
@@ -32,10 +33,7 @@ class TestModelFactory
 
     public function create()
     {
-        $createdAt = $this->startingFrom;
-
-        foreach (range(1, $this->numberOfDays) as $i) {
-            TestModel::create(['created_at' => $createdAt->subDay()]);
-        }
+        CarbonPeriod::create($this->startingFrom->subDays($this->numberOfDays), $this->numberOfDays)
+            ->forEach(fn(Carbon $created_at) => TestModel::create(compact('created_at')));
     }
 }
