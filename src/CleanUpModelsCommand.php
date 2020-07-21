@@ -21,6 +21,10 @@ class CleanUpModelsCommand extends Command
         $this->comment('All done!');
     }
 
+    protected function cleanUpLoop(GetsCleanedUp $model)
+    {
+    }
+
     protected function cleanUp(GetsCleanedUp $model)
     {
         $modelClass = get_class($model);
@@ -31,17 +35,24 @@ class CleanUpModelsCommand extends Command
 
         $model->cleanUp($cleanupConfig);
 
-        $query = $model::query();
+        do {
+            $query = $model::query();
 
-        if ($cleanupConfig->olderThan) {
-            $query->where('created_at', '<', $cleanupConfig->olderThan->toDateTimeString());
-        }
+            if ($cleanupConfig->olderThan) {
+                $query->where('created_at', '<', $cleanupConfig->olderThan->toDateTimeString());
+            }
 
-        if ($cleanupConfig->scopeClosure) {
-            ($cleanupConfig->scopeClosure)($query);
-        }
+            if ($cleanupConfig->scope) {
+                ($cleanupConfig->scope)($query);
+            }
 
-        $numberOfDeletedRecords = $query->delete();
+            if ($cleanupConfig->chunkBy) {
+                $query->limit($cleanupConfig->chunkBy);
+            }
+
+            $numberOfDeletedRecords = $query->delete();
+
+        } while (($cleanupConfig->continueWhile)($numberOfDeletedRecords));
 
         event(new ModelCleanedUpEvent($model, $numberOfDeletedRecords));
 

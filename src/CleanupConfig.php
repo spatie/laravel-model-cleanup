@@ -20,7 +20,18 @@ class CleanupConfig
 {
     public ?CarbonInterface $olderThan = null;
 
-    public ?Closure $scopeClosure = null;
+    public ?Closure $scope = null;
+
+    public ?int $chunkBy = null;
+
+    public Closure $continueWhile;
+
+    public function __construct()
+    {
+        $this->continueWhile = function () {
+            return false;
+        };
+    }
 
     /** TODO: consider adding parameter for column name */
     public function olderThanDays(int $numberOfDays): self
@@ -39,7 +50,20 @@ class CleanupConfig
 
     public function scope(Closure $scopeClosure): self
     {
-        $this->scopeClosure = $scopeClosure;
+        $this->scope = $scopeClosure;
+
+        return $this;
+    }
+
+    public function chunk(int $chunkBy, Closure $continueWhile = null): self
+    {
+        $this->chunkBy = $chunkBy;
+
+        $this->continueWhile = $continueWhile ?? fn (int $numberOfRecordsDeleted) => $numberOfRecordsDeleted >= $chunkBy;
+
+        if ($continueWhile) {
+            $this->continueWhile = $continueWhile;
+        }
 
         return $this;
     }

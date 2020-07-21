@@ -30,9 +30,7 @@ class LogItem extends Model implements GetsCleanedUp
             ->olderThan($carbon)
             
             ->scope(function(Builder $query))
-            ->chunkBy(10000)
-            ->stopWhen(function() {});
-
+            ->chunkBy(10000);
         // Delete all records older than a year
         return $query->where('created_at', '<', Carbon::now()->subYear());
      }

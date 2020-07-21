@@ -3,8 +3,11 @@
 namespace Spatie\ModelCleanup\Test;
 
 use Carbon\Carbon;
+use Closure;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
 use Spatie\ModelCleanup\Test\Models\TestModel;
 use Spatie\TestTime\TestTime;
@@ -18,6 +21,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->setUpDatabase($this->app);
 
         TestTime::freeze('Y-m-d H:i:s', '2020-01-01 00:00:00');
+
+        DB::enableQueryLog();
     }
 
     protected function getPackageProviders($app)
@@ -54,5 +59,28 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             ->toArray();
 
         $this->assertEquals($expectedDates, $actualDates);
+    }
+
+    protected function useCleanupConfig(Closure $closure)
+    {
+        TestModel::setCleanupConfigClosure($closure);
+
+        config()->set('model-cleanup.models', [
+            TestModel::class,
+        ]);
+    }
+
+    protected function assertDeleteQueriesExecuted(int $expectedCount)
+    {
+        $actualCount = collect(DB::getQueryLog())
+            ->map(function (array $queryProperties) {
+                return $queryProperties['query'];
+            })
+            ->filter(function (string $query) {
+                return Str::startsWith($query, 'delete');
+            })
+            ->count();
+
+        $this->assertEquals($expectedCount, $actualCount, "Expected {$expectedCount} delete queries, but {$actualCount} delete queries where executed.");
     }
 }

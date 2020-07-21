@@ -2,8 +2,9 @@
 
 namespace Spatie\ModelCleanup\Test;
 
-use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Test\Models\TestModel;
@@ -36,6 +37,8 @@ class CleanupTest extends TestCase
             '2019-12-31',
             '2019-12-30',
         ]);
+
+        $this->assertDeleteQueriesExecuted(1);
     }
 
     /** @test */
@@ -129,12 +132,25 @@ class CleanupTest extends TestCase
         ]);
     }
 
-    protected function useCleanupConfig(Closure $closure)
+    /** @test */
+    public function it_can_delete_old_records_in_a_chunked_way()
     {
-        TestModel::setCleanupConfigClosure($closure);
+        $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+            $cleanupConfig
+                ->olderThanDays(2)
+                ->chunk(2);
+        });
 
-        config()->set('model-cleanup.models', [
-            TestModel::class,
+        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+
+        $this->assertModelsExistForDays([
+            '2020-01-03',
+            '2020-01-02',
+            '2020-01-01',
+            '2019-12-31',
+            '2019-12-30',
         ]);
+
+        $this->assertDeleteQueriesExecuted(3);
     }
 }
