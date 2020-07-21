@@ -2,6 +2,7 @@
 
 namespace Spatie\ModelCleanup;
 
+use Closure;
 use Illuminate\Console\Command;
 use Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory;
 
@@ -61,7 +62,7 @@ class CleanUpModelsCommand extends Command
         $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
     }
 
-    protected function shouldContinueDeleting(int $numberOfRecordDeleted, \Closure $continueWhile): bool
+    protected function shouldContinueDeleting(int $numberOfRecordDeleted, Closure $continueWhile): bool
     {
         if (! $continueWhile($numberOfRecordDeleted)) {
             return false;
