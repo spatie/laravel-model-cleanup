@@ -2,19 +2,8 @@
 
 namespace Spatie\ModelCleanup;
 
-/*
- *         return (new CleanUp)
-            ->olderThanDays(10)
-            ->olderThan($carbon)
-
-            ->query(function(Builder $query))
-            ->chunk(10000)
-            ->stopWhen(function() {});
- */
-
 use Carbon\CarbonInterface;
 use Closure;
-use Illuminate\Database\Query\Builder;
 
 class CleanupConfig
 {
