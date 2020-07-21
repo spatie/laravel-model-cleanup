@@ -56,7 +56,6 @@ class CleanUpModelsCommand extends Command
                 $numberOfDeletedRecords,
                 $cleanupConfig->continueWhile
             );
-
         } while ($shouldContinueDeleting);
 
         event(new ModelCleanedUpEvent($model, $numberOfDeletedRecords));
