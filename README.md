@@ -1,10 +1,10 @@
 # Clean up unneeded records
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-model-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-model-cleanup)
-[![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/spatie/laravel-model-cleanup/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-model-cleanup)
-[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-model-cleanup.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-model-cleanup)
+![Tests](https://github.com/spatie/laravel-model-cleanup/workflows/run-tests/badge.svg)
+![Psalm](https://github.com/spatie/laravel-model-cleanup/workflows/Psalm/badge.svg)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-model-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-model-cleanup)
+[![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 This package will clean up unneeded records for your Eloquent models. 
 
