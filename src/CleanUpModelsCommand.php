@@ -3,6 +3,7 @@
 namespace Spatie\ModelCleanup;
 
 use Illuminate\Console\Command;
+use Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory;
 
 class CleanUpModelsCommand extends Command
 {
@@ -27,7 +28,10 @@ class CleanUpModelsCommand extends Command
 
         $this->info("Cleaning {$modelClass}...");
 
-        $cleanupConfig = config('model-cleanup.default_cleanup_config');
+        /** @var CleanupConfigFactory $cleanupConfigFactory */
+        $cleanupConfigFactory = app(CleanupConfigFactory::class);
+
+        $cleanupConfig = $cleanupConfigFactory->getCleanupConfig();
 
         $model->cleanUp($cleanupConfig);
 

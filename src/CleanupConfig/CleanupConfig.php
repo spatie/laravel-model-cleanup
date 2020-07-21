@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ModelCleanup;
+namespace Spatie\ModelCleanup\CleanupConfig;
 
 use Carbon\CarbonInterface;
 use Closure;
@@ -57,5 +57,10 @@ class CleanupConfig
             ?? fn (int $numberOfRecordsDeleted) => $numberOfRecordsDeleted >= $chunkBy;
 
         return $this;
+    }
+
+    public function __sleep(): array
+    {
+        return ['a' => 1];
     }
 }

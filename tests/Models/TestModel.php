@@ -4,7 +4,7 @@ namespace Spatie\ModelCleanup\Test\Models;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\ModelCleanup\CleanupConfig;
+use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
 use Spatie\ModelCleanup\GetsCleanedUp;
 
 class TestModel extends Model implements GetsCleanedUp

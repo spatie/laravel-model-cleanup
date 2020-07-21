@@ -1,6 +1,7 @@
 <?php
 
-use Spatie\ModelCleanup\CleanupConfig;
+use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
+use Spatie\ModelCleanup\CleanupConfig\DefaultCleanUpConfigFactory;
 
 return [
 
@@ -13,7 +14,8 @@ return [
     ],
 
     /*
-     * Here you can specify how models should be cleaned by default.
+     * Here you can specify the class that will return the configuration on how
+     * models should be cleaned up by default.
      */
-    'default_cleanup_config' => CleanupConfig::new(),
+    'default_cleanup_config' => DefaultCleanUpConfigFactory::class,
 ];

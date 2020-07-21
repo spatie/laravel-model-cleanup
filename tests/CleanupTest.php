@@ -3,9 +3,10 @@
 namespace Spatie\ModelCleanup\Test;
 
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\ModelCleanup\CleanupConfig;
+use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
 use Spatie\ModelCleanup\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Test\Models\TestModel;
+use Spatie\ModelCleanup\Test\TestModels\ChunkOneCleanupConfigFactory;
 
 class CleanupTest extends TestCase
 {
@@ -208,9 +209,7 @@ class CleanupTest extends TestCase
     /** @test */
     public function it_will_use_the_default_clean_up_config_from_the_config_file()
     {
-        $defaultCleanUpConfig = CleanupConfig::new()->chunk(1);
-
-        config()->set('model-cleanup.default_cleanup_config', $defaultCleanUpConfig);
+        config()->set('model-cleanup.default_cleanup_config', ChunkOneCleanupConfigFactory::class);
 
         $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
             $cleanupConfig->olderThanDays(2);
