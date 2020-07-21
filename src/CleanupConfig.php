@@ -53,11 +53,8 @@ class CleanupConfig
     {
         $this->chunkBy = $chunkBy;
 
-        $this->continueWhile = $continueWhile ?? fn (int $numberOfRecordsDeleted) => $numberOfRecordsDeleted >= $chunkBy;
-
-        if ($continueWhile) {
-            $this->continueWhile = $continueWhile;
-        }
+        $this->continueWhile = $continueWhile
+            ?? fn (int $numberOfRecordsDeleted) => $numberOfRecordsDeleted >= $chunkBy;
 
         return $this;
     }

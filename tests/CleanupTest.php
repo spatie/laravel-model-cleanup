@@ -187,7 +187,7 @@ class CleanupTest extends TestCase
         $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
             $cleanupConfig
                 ->olderThanDays(2)
-                ->chunk(2, function (int $numberOfRecordsDeleted) {
+                ->chunk(2, function () {
                     return true;
                 });
         });

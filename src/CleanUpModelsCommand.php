@@ -54,6 +54,7 @@ class CleanUpModelsCommand extends Command
             );
         } while ($shouldContinueDeleting);
 
+        /** TODO: number of deleted record should be the total number of deletion records (sum of loops) + add test */
         event(new ModelCleanedUpEvent($model, $numberOfDeletedRecords));
 
         $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
