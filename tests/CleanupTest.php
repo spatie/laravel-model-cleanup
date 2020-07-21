@@ -3,8 +3,6 @@
 namespace Spatie\ModelCleanup\Test;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Test\Models\TestModel;
@@ -152,5 +150,58 @@ class CleanupTest extends TestCase
         ]);
 
         $this->assertDeleteQueriesExecuted(3);
+    }
+
+    /** @test */
+    public function it_can_use_custom_continue_while_closure_when_deleting_old_records_in_a_chunked_way()
+    {
+        $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+            $cleanupConfig
+                ->olderThanDays(2)
+                ->chunk(2, function (int $numberOfRecordsDeleted) {
+                    $this->assertEquals(2, $numberOfRecordsDeleted);
+
+                    return false;
+                });
+        });
+
+        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+
+        $this->assertModelsExistForDays([
+            '2020-01-03',
+            '2020-01-02',
+            '2020-01-01',
+            '2019-12-31',
+            '2019-12-30',
+            '2019-12-27',
+            '2019-12-26',
+            '2019-12-25',
+        ]);
+
+        $this->assertDeleteQueriesExecuted(1);
+    }
+
+    /** @test */
+    public function it_will_stop_deleting_when_no_records_are_being_deleted_anymore()
+    {
+        $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+            $cleanupConfig
+                ->olderThanDays(2)
+                ->chunk(2, function (int $numberOfRecordsDeleted) {
+                    return true;
+                });
+        });
+
+        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+
+        $this->assertModelsExistForDays([
+            '2020-01-03',
+            '2020-01-02',
+            '2020-01-01',
+            '2019-12-31',
+            '2019-12-30',
+        ]);
+
+        $this->assertDeleteQueriesExecuted(4);
     }
 }

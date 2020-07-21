@@ -52,10 +52,24 @@ class CleanUpModelsCommand extends Command
 
             $numberOfDeletedRecords = $query->delete();
 
-        } while (($cleanupConfig->continueWhile)($numberOfDeletedRecords));
+            $shouldContinueDeleting = $this->shouldContinueDeleting(
+                $numberOfDeletedRecords,
+                $cleanupConfig->continueWhile
+            );
+
+        } while ($shouldContinueDeleting);
 
         event(new ModelCleanedUpEvent($model, $numberOfDeletedRecords));
 
         $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
+    }
+
+    protected function shouldContinueDeleting(int $numberOfRecordDeleted, \Closure $continueWhile): bool
+    {
+        if (! $continueWhile($numberOfRecordDeleted)) {
+            return false;
+        }
+
+        return $numberOfRecordDeleted !== 0;
     }
 }
