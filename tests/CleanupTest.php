@@ -3,8 +3,6 @@
 namespace Spatie\ModelCleanup\Test;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Test\Models\TestModel;

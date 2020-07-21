@@ -51,7 +51,6 @@ class CleanUpModelsCommand extends Command
             }
 
             $numberOfDeletedRecords = $query->delete();
-
         } while (($cleanupConfig->continueWhile)($numberOfDeletedRecords));
 
         event(new ModelCleanedUpEvent($model, $numberOfDeletedRecords));
