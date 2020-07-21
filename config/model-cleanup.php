@@ -1,5 +1,7 @@
 <?php
 
+use Spatie\ModelCleanup\CleanupConfig;
+
 return [
 
     /*
@@ -8,4 +10,6 @@ return [
     'models' => [
         // App\LogItem::class,
     ],
+
+    'default_cleanup_config' => CleanupConfig::new(),
 ];

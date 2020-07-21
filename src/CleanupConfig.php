@@ -26,6 +26,11 @@ class CleanupConfig
 
     public Closure $continueWhile;
 
+    public static function new(): self
+    {
+        return new static();
+    }
+
     public function __construct()
     {
         $this->continueWhile = function () {

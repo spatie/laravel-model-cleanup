@@ -21,17 +21,13 @@ class CleanUpModelsCommand extends Command
         $this->comment('All done!');
     }
 
-    protected function cleanUpLoop(GetsCleanedUp $model)
-    {
-    }
-
     protected function cleanUp(GetsCleanedUp $model)
     {
         $modelClass = get_class($model);
 
         $this->info("Cleaning {$modelClass}...");
 
-        $cleanupConfig = new CleanupConfig();
+        $cleanupConfig = config('model-cleanup.default_cleanup_config');
 
         $model->cleanUp($cleanupConfig);
 

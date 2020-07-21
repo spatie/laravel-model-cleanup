@@ -204,4 +204,28 @@ class CleanupTest extends TestCase
 
         $this->assertDeleteQueriesExecuted(4);
     }
+
+    /** @test */
+    public function it_will_use_the_default_clean_up_config_from_the_config_file()
+    {
+        $defaultCleanUpConfig = CleanupConfig::new()->chunk(1);
+
+        config()->set('model-cleanup.default_cleanup_config', $defaultCleanUpConfig);
+
+        $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+            $cleanupConfig->olderThanDays(2);
+        });
+
+        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+
+        $this->assertModelsExistForDays([
+            '2020-01-03',
+            '2020-01-02',
+            '2020-01-01',
+            '2019-12-31',
+            '2019-12-30',
+        ]);
+
+        $this->assertDeleteQueriesExecuted(6);
+    }
 }
