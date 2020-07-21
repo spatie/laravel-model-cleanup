@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ModelCleanup\Test\TestModels;
+namespace Spatie\ModelCleanup\Test\TestClasses;
 
 use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
 use Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory;

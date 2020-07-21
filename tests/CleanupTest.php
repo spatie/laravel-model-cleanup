@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
 use Spatie\ModelCleanup\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Test\Models\TestModel;
-use Spatie\ModelCleanup\Test\TestModels\ChunkOneCleanupConfigFactory;
+use Spatie\ModelCleanup\Test\TestClasses\ChunkOneCleanupConfigFactory;
 
 class CleanupTest extends TestCase
 {
