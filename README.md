@@ -21,15 +21,15 @@ class LogItem extends Model implements GetsCleanedUp
 {
     ...
     
-     public static function cleanUp(Builder $query): CleanStrategy
+     public static function cleanUp(CleanupConfig $config): void
      {
         Chuncked
 
-        return (new CleanUp)
+        return $config
             ->olderThanDays(10)
             ->olderThan($carbon)
             
-            ->query(function(Builder $query))
+            ->scope(function(Builder $query))
             ->chunkBy(10000)
             ->stopWhen(function() {});
 
