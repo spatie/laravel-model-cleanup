@@ -81,6 +81,10 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             })
             ->count();
 
-        $this->assertEquals($expectedCount, $actualCount, "Expected {$expectedCount} delete queries, but {$actualCount} delete queries where executed.");
+        $this->assertEquals(
+            $expectedCount,
+            $actualCount,
+            "Expected {$expectedCount} delete queries, but {$actualCount} delete queries where executed."
+        );
     }
 }
