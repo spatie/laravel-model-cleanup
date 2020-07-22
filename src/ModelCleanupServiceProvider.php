@@ -18,10 +18,6 @@ class ModelCleanupServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/model-cleanup.php', 'model-cleanup');
 
-        $this->app->bind(CleanupConfigFactory::class, function () {
-            return app(config('model-cleanup.default_cleanup_config'));
-        });
-
         $this->commands([
             CleanUpModelsCommand::class,
         ]);
