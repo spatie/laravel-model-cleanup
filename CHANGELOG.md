@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-model-cleanup` will be documented in this file
 
+## 3.0.0 - 2020-07-XX
+
+- total rewrite of the package
+
 ## 2.5.0 - 2020-03-02
 
 - add support for Laravel 7

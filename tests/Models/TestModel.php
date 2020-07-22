@@ -13,6 +13,10 @@ class TestModel extends Model implements GetsCleanedUp
 
     protected $guarded = [];
 
+    protected $casts = [
+        'custom_date' => 'timestamp',
+    ];
+
     protected static $cleanupClosure;
 
     public static function setCleanupConfigClosure(Closure $cleanupClosure)

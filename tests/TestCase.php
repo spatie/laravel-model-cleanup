@@ -47,6 +47,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->increments('id');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
+            $table->timestamp('custom_date')->nullable();
             $table->string('status')->default('active');
         });
     }

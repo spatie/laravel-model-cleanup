@@ -9,6 +9,7 @@ use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
 use Spatie\ModelCleanup\Test\Models\TestModel;
 use Spatie\ModelCleanup\Test\TestClasses\ChunkOneCleanupConfigFactory;
+use Spatie\TestTime\TestTime;
 
 class CleanupTest extends TestCase
 {
@@ -242,5 +243,26 @@ class CleanupTest extends TestCase
         ]);
 
         $this->assertDeleteQueriesExecuted(6);
+    }
+
+    /** @test */
+    public function it_can_use_a_default_date_attribute()
+    {
+        TestModel::query()->update(['custom_date' => now()]);
+
+        $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+            $cleanupConfig
+                ->useDateAttribute('custom_date')
+                ->olderThanDays(20);
+        });
+
+
+        TestTime::addDays(20);
+        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+        $this->assertEquals(10, TestModel::count());
+
+        TestTime::addDay();
+        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+        $this->assertEquals(0, TestModel::count());
     }
 }

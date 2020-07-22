@@ -42,7 +42,7 @@ class CleanUpModelsCommand extends Command
             $query = $model::query();
 
             if ($cleanupConfig->olderThan) {
-                $query->where('created_at', '<', $cleanupConfig->olderThan->toDateTimeString());
+                $query->where($cleanupConfig->dateAttribute, '<', $cleanupConfig->olderThan->toDateTimeString());
             }
 
             if ($cleanupConfig->scope) {

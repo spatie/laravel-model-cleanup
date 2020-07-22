@@ -15,6 +15,8 @@ class CleanupConfig
 
     public Closure $continueWhile;
 
+    public string $dateAttribute = 'created_at';
+
     public static function new(): self
     {
         return new static();
@@ -27,7 +29,6 @@ class CleanupConfig
         };
     }
 
-    /** TODO: consider adding parameter for column name */
     public function olderThanDays(int $numberOfDays): self
     {
         $this->olderThan = now()->subDays($numberOfDays);
@@ -38,6 +39,13 @@ class CleanupConfig
     public function olderThan(CarbonInterface $olderThan): self
     {
         $this->olderThan = $olderThan;
+
+        return $this;
+    }
+
+    public function useDateAttribute(string $dateAttribute): self
+    {
+        $this->dateAttribute = $dateAttribute;
 
         return $this;
     }
