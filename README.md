@@ -6,7 +6,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-model-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-model-cleanup)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
-This package will clean up old records for your Eloquent models. 
+This package will clean up old records. 
 
 The models you wish to clean up should have a method `cleanUp` which returns the configuration how the model should be cleaned up. Here's an example where all records older than 5 days will be cleaned up.
 
