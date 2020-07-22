@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
+use Spatie\ModelCleanup\Exceptions\InvalidCleanupConfig;
 use Spatie\ModelCleanup\GetsCleanedUp;
 
 class CleanUpModelsCommand extends Command
@@ -35,6 +36,10 @@ class CleanUpModelsCommand extends Command
         $cleanupConfig = app(CleanupConfigFactory::class)->getCleanupConfig();
 
         $model->cleanUp($cleanupConfig);
+
+        if (! $cleanupConfig->isValid()) {
+            throw InvalidCleanupConfig::create($model);
+        }
 
         $totalNumberOfDeletedRecords = 0;
 

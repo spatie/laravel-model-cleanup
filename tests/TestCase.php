@@ -4,6 +4,7 @@ namespace Spatie\ModelCleanup\Test;
 
 use Carbon\Carbon;
 use Closure;
+use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -87,5 +88,20 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $actualCount,
             "Expected {$expectedCount} delete queries, but {$actualCount} delete queries where executed."
         );
+    }
+
+    protected function assertExceptionThrown(
+        callable $callable,
+        string $expectedExceptionClass = Exception::class
+    ): void {
+        try {
+            $callable();
+
+            $this->assertTrue(false, "Expected exception `{$expectedExceptionClass}` was not thrown.");
+        } catch (Exception $exception) {
+            $actualExceptionClass = get_class($exception);
+
+            $this->assertInstanceOf($expectedExceptionClass, $exception, "Unexpected exception `$actualExceptionClass` thrown. Expected exception `$expectedExceptionClass`");
+        }
     }
 }

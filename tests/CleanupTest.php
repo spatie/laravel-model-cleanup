@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
 use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
+use Spatie\ModelCleanup\Exceptions\InvalidCleanupConfig;
 use Spatie\ModelCleanup\Test\Models\TestModel;
 use Spatie\ModelCleanup\Test\TestClasses\ChunkOneCleanupConfigFactory;
 use Spatie\TestTime\TestTime;
@@ -264,5 +265,18 @@ class CleanupTest extends TestCase
         TestTime::addDay();
         $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
         $this->assertEquals(0, TestModel::count());
+    }
+
+    /** @test */
+    public function it_will_not_delete_all_records_when_nothing_has_been_specified_on_cleanup_config()
+    {
+        $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+        });
+
+        $this->assertExceptionThrown(function () {
+            $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+        }, InvalidCleanupConfig::class);
+
+        $this->assertEquals(10, TestModel::count());
     }
 }

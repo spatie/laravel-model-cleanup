@@ -66,4 +66,17 @@ class CleanupConfig
 
         return $this;
     }
+
+    public function isValid(): bool
+    {
+        if (! is_null($this->olderThan)) {
+            return true;
+        }
+
+        if (! is_null($this->scope)) {
+            return true;
+        }
+
+        return false;
+    }
 }
