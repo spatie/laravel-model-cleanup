@@ -3,6 +3,7 @@
 namespace Spatie\ModelCleanup;
 
 use Illuminate\Support\ServiceProvider;
+use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
 
 class ModelCleanupServiceProvider extends ServiceProvider
 {
@@ -17,10 +18,8 @@ class ModelCleanupServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/model-cleanup.php', 'model-cleanup');
 
-        $this->app->bind('command.clean:models', CleanUpModelsCommand::class);
-
         $this->commands([
-            'command.clean:models',
+            CleanUpModelsCommand::class,
         ]);
     }
 }

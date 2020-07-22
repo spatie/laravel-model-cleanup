@@ -3,29 +3,27 @@
 namespace Spatie\ModelCleanup\Test;
 
 use Carbon\Carbon;
+use Closure;
+use Exception;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
-use Spatie\ModelCleanup\Test\Models\CleanableItem;
-use Spatie\ModelCleanup\Test\Models\ForceCleanableItem;
-use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryCleanableItem;
-use Spatie\ModelCleanup\Test\Models\ModelsInSubDirectory\SubDirectoryUncleanableItem;
-use Spatie\ModelCleanup\Test\Models\UncleanableItem;
-use Event;
+use Spatie\ModelCleanup\Test\Models\TestModel;
+use Spatie\TestTime\TestTime;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    /** @var array  */
-    protected $firedEvents = [];
-
     public function setUp(): void
     {
         parent::setUp();
 
         $this->setUpDatabase($this->app);
 
-        Event::listen('*', function ($event) {
-            $this->firedEvents[] = $event;
-        });
+        TestTime::freeze('Y-m-d H:i:s', '2020-01-01 00:00:00');
+
+        DB::enableQueryLog();
     }
 
     protected function getPackageProviders($app)
@@ -35,103 +33,75 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
     public function getEnvironmentSetUp($app)
     {
-        $app['config']->set('database.default', 'sqlite');
-        $app['config']->set('database.connections.sqlite', [
+        config()->set('database.default', 'sqlite');
+        config()->set('database.connections.sqlite', [
             'driver' => 'sqlite',
-            'database' => $this->getTempDirectory().'/database.sqlite',
+            'database' => ':memory:',
             'prefix' => '',
         ]);
-        $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
+        config()->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }
 
     protected function setUpDatabase($app)
     {
-        file_put_contents($this->getTempDirectory().'/database.sqlite', null);
-
-        $app['db']->connection()->getSchemaBuilder()->create('cleanable_items', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamp('created_at');
-        });
-
-        $app['db']->connection()->getSchemaBuilder()->create('forced_cleanable_items', function (Blueprint $table) {
+        Schema::create('test_models', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
-            $table->timestamp('deleted_at');
+            $table->timestamp('custom_date')->nullable();
+            $table->string('status')->default('active');
         });
-
-        $app['db']->connection()->getSchemaBuilder()->create('sub_dir_cleanable_items', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamp('created_at');
-        });
-
-        $app['db']->connection()->getSchemaBuilder()->create('uncleanable_items', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamp('created_at');
-        });
-
-        $app['db']->connection()->getSchemaBuilder()->create('sub_dir_uncleanable_items', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamp('created_at');
-        });
-
-        $this->createDatabaseRecords();
     }
 
-    public function getTempDirectory($suffix = '')
+    protected function assertModelsExistForDays(array $expectedDates)
     {
-        return __DIR__.'/temp'.($suffix == '' ? '' : '/'.$suffix);
+        $actualDates = TestModel::all()
+            ->pluck('created_at')
+            ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
+            ->toArray();
+
+        $this->assertEquals($expectedDates, $actualDates);
     }
 
-    protected function createDatabaseRecords()
+    protected function useCleanupConfig(Closure $closure)
     {
-        foreach (range(1, 10) as $index) {
-            CleanableItem::create([
-                'created_at' => Carbon::now()->subYear(1)->subDays(7),
-            ]);
+        TestModel::setCleanupConfigClosure($closure);
 
-            CleanableItem::create([
-                'created_at' => Carbon::now()->subMonth(),
-            ]);
-
-            ForceCleanableItem::create([
-                'created_at' => Carbon::now()->subMonth(),
-                'deleted_at' => Carbon::now()->subDays(2)
-            ]);
-
-            SubDirectoryCleanableItem::create([
-                'created_at' => Carbon::now()->subYear(1)->subDays(7),
-            ]);
-
-            SubDirectoryCleanableItem::create([
-                'created_at' => Carbon::now()->subMonth(),
-            ]);
-
-            ForceCleanableItem::create([
-                'created_at' => Carbon::now()->subMonth(),
-                'deleted_at' => Carbon::now()
-            ]);
-
-            UncleanableItem::create([
-                'created_at' => Carbon::now()->subYear(1)->subDays(7),
-            ]);
-
-            SubDirectoryUncleanableItem::create([
-                'created_at' => Carbon::now()->subYear(1)->subDays(7),
-            ]);
-        }
+        config()->set('model-cleanup.models', [
+            TestModel::class,
+        ]);
     }
 
-    public function getFiredEvent($eventClassName)
+    protected function assertDeleteQueriesExecuted(int $expectedCount)
     {
-        return collect($this->firedEvents)
-            ->filter(function ($event) use ($eventClassName) {
-                if ($event instanceof $eventClassName) {
-                    return true;
-                };
-
-                return $event == $eventClassName;
+        $actualCount = collect(DB::getQueryLog())
+            ->map(function (array $queryProperties) {
+                return $queryProperties['query'];
             })
-            ->first();
+            ->filter(function (string $query) {
+                return Str::startsWith($query, 'delete');
+            })
+            ->count();
+
+        $this->assertEquals(
+            $expectedCount,
+            $actualCount,
+            "Expected {$expectedCount} delete queries, but {$actualCount} delete queries where executed."
+        );
+    }
+
+    protected function assertExceptionThrown(
+        callable $callable,
+        string $expectedExceptionClass = Exception::class
+    ): void {
+        try {
+            $callable();
+
+            $this->assertTrue(false, "Expected exception `{$expectedExceptionClass}` was not thrown.");
+        } catch (Exception $exception) {
+            $actualExceptionClass = get_class($exception);
+
+            $this->assertInstanceOf($expectedExceptionClass, $exception, "Unexpected exception `$actualExceptionClass` thrown. Expected exception `$expectedExceptionClass`");
+        }
     }
 }

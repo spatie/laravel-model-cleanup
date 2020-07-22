@@ -3,22 +3,16 @@
 return [
 
     /*
-     * All models that use the GetsCleanedUp interface in these directories will be cleaned.
-     */
-    'directories' => [
-        // app_path('models'),
-    ],
-
-    /*
-     * All models in this array that use the GetsCleanedUp interface will be cleaned.
+     * All models in this array that implement `Spatie\ModelCleanupGetsCleanedUp`
+     * will be cleaned.
      */
     'models' => [
-        // App\LogItem::class,
+        // App\Models\YourModel::class,
     ],
 
     /*
-     * Specify whether to search the configured `directories` recursively.
-     * Set to false to only search for models directly inside the specified paths.
+     * Here you can specify the class that will return the configuration on how
+     * models should be cleaned up by default.
      */
-    'recursive' => true,
+    'default_cleanup_config' => Spatie\ModelCleanup\DefaultCleanUpConfigFactory::class,
 ];
