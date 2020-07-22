@@ -4,12 +4,11 @@ namespace Spatie\ModelCleanup\Test;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Event;
-use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
+use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
 use Spatie\ModelCleanup\Exceptions\InvalidCleanupConfig;
 use Spatie\ModelCleanup\Test\Models\TestModel;
-use Spatie\ModelCleanup\Test\TestClasses\ChunkOneCleanupConfigFactory;
 use Spatie\TestTime\TestTime;
 
 class CleanupTest extends TestCase
@@ -225,29 +224,7 @@ class CleanupTest extends TestCase
     }
 
     /** @test */
-    public function it_will_use_the_default_clean_up_config_from_the_config_file()
-    {
-        config()->set('model-cleanup.default_cleanup_config', ChunkOneCleanupConfigFactory::class);
-
-        $this->useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-            $cleanupConfig->olderThanDays(2);
-        });
-
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
-
-        $this->assertModelsExistForDays([
-            '2020-01-03',
-            '2020-01-02',
-            '2020-01-01',
-            '2019-12-31',
-            '2019-12-30',
-        ]);
-
-        $this->assertDeleteQueriesExecuted(6);
-    }
-
-    /** @test */
-    public function it_can_use_a_default_date_attribute()
+    public function it_can_use_a_custom_date_attribute()
     {
         TestModel::query()->update(['custom_date' => now()]);
 

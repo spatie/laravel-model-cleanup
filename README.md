@@ -12,7 +12,7 @@ The models you wish to clean up should have a method `cleanUp` which returns the
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
+use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\GetsCleanedUp;
 
 class YourModel extends Model implements GetsCleanedUp
@@ -70,7 +70,7 @@ return [
      * Here you can specify the class that will return the configuration on how
      * models should be cleaned up by default.
      */
-    'default_cleanup_config' => Spatie\ModelCleanup\CleanupConfig\DefaultCleanUpConfigFactory::class,
+    'default_cleanup_config' => Spatie\ModelCleanup\DefaultCleanUpConfigFactory::class,
 ];
 
 ```
@@ -95,7 +95,7 @@ All models that you want to clean up must implement the `GetsCleanedUp`-interfac
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
+use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\GetsCleanedUp;
 
 class YourModel extends Model implements GetsCleanedUp
@@ -212,48 +212,6 @@ In the example below, the deletion process will continue until all records older
        ->chunk(1000, fn() => YourModel::count() > 5000);
 }
 ```
-
-## Setting a default clean up config
-
-Imagine you want to clean up old records for old models in a chunked way for all models. Instead of using `chunk` on each model separately, you can configure this on a global level.
-
- To get started you should create a class that implements `Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory`. The `getCleanupConfig` method should return an instance of `CleanupConfig` that will be used for all models.
- 
-```php
-namespace App\Support;
-
-use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
-use Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory;
-
-class ChunkCleanupConfigFactory implements CleanupConfigFactory
-{
-    public static function getCleanupConfig(): CleanupConfig
-    {
-        return CleanupConfig::new()->chunk(1000);
-    }
-}
-```
-
-In the `model-cleanup` config file you should specify the name of this class in the `default_cleanup_config` key.
-
-```php
-return [
-    // ...
-
-    'default_cleanup_config' => App\Support\ChunkCleanupConfigFactory::class
-];
-```
-
-With this in place all models will be cleaned up in a chunked way.
-
-```php
- public function cleanUp(CleanupConfig $config): void
- {
-    // even though `chunk` isn't specified, the model will be cleaned up in a chunked way
-    $config->olderThanDays(5);
-}
-```
-
 
 ## Events
 

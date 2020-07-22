@@ -3,7 +3,6 @@
 namespace Spatie\ModelCleanup;
 
 use Illuminate\Support\ServiceProvider;
-use Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory;
 use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
 
 class ModelCleanupServiceProvider extends ServiceProvider

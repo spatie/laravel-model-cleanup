@@ -5,7 +5,7 @@ namespace Spatie\ModelCleanup\Commands;
 use Closure;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory;
+use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
 use Spatie\ModelCleanup\Exceptions\InvalidCleanupConfig;
 use Spatie\ModelCleanup\GetsCleanedUp;
@@ -33,7 +33,7 @@ class CleanUpModelsCommand extends Command
 
         $this->info("Cleaning {$modelClass}...");
 
-        $cleanupConfig = app(CleanupConfigFactory::class)->getCleanupConfig();
+        $cleanupConfig = new CleanupConfig();
 
         $model->cleanUp($cleanupConfig);
 

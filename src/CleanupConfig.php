@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ModelCleanup\CleanupConfig;
+namespace Spatie\ModelCleanup;
 
 use Carbon\CarbonInterface;
 use Closure;
@@ -16,11 +16,6 @@ class CleanupConfig
     public Closure $continueWhile;
 
     public string $dateAttribute = 'created_at';
-
-    public static function new(): self
-    {
-        return new static();
-    }
 
     public function __construct()
     {
