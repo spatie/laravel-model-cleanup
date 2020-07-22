@@ -3,8 +3,10 @@
 namespace Spatie\ModelCleanup\Test;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Event;
 use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
-use Spatie\ModelCleanup\CleanUpModelsCommand;
+use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
+use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
 use Spatie\ModelCleanup\Test\Models\TestModel;
 use Spatie\ModelCleanup\Test\TestClasses\ChunkOneCleanupConfigFactory;
 
@@ -13,6 +15,8 @@ class CleanupTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        Event::fake();
 
         TestModelFactory::new()
             ->startingFrom(now()->addDays(3))
@@ -38,6 +42,12 @@ class CleanupTest extends TestCase
         ]);
 
         $this->assertDeleteQueriesExecuted(1);
+
+        Event::assertDispatched(function (ModelCleanedUpEvent $event) {
+            $this->assertEquals(5, $event->numberOfDeletedRecords);
+
+            return true;
+        });
     }
 
     /** @test */
@@ -204,6 +214,12 @@ class CleanupTest extends TestCase
         ]);
 
         $this->assertDeleteQueriesExecuted(4);
+
+        Event::assertDispatched(function (ModelCleanedUpEvent $event) {
+            $this->assertEquals(5, $event->numberOfDeletedRecords);
+
+            return true;
+        });
     }
 
     /** @test */

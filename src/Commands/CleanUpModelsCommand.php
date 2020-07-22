@@ -1,10 +1,13 @@
 <?php
 
-namespace Spatie\ModelCleanup;
+namespace Spatie\ModelCleanup\Commands;
 
 use Closure;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory;
+use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
+use Spatie\ModelCleanup\GetsCleanedUp;
 
 class CleanUpModelsCommand extends Command
 {
@@ -33,6 +36,8 @@ class CleanUpModelsCommand extends Command
 
         $model->cleanUp($cleanupConfig);
 
+        $totalNumberOfDeletedRecords = 0;
+
         do {
             $query = $model::query();
 
@@ -50,16 +55,17 @@ class CleanUpModelsCommand extends Command
 
             $numberOfDeletedRecords = $query->delete();
 
+            $totalNumberOfDeletedRecords += $numberOfDeletedRecords;
+
             $shouldContinueDeleting = $this->shouldContinueDeleting(
                 $numberOfDeletedRecords,
                 $cleanupConfig->continueWhile
             );
         } while ($shouldContinueDeleting);
 
-        /** TODO: number of deleted record should be the total number of deletion records (sum of loops) + add test */
-        event(new ModelCleanedUpEvent($model, $numberOfDeletedRecords));
+        event(new ModelCleanedUpEvent($model, $totalNumberOfDeletedRecords));
 
-        $this->info("Deleted {$numberOfDeletedRecords} record(s) from {$modelClass}.");
+        $this->info('Deleted ' . $totalNumberOfDeletedRecords . ' ' . Str::plural('record', $totalNumberOfDeletedRecords) .   " from {$modelClass}.");
     }
 
     protected function shouldContinueDeleting(int $numberOfRecordDeleted, Closure $continueWhile): bool

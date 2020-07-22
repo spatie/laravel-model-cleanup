@@ -1,6 +1,8 @@
 <?php
 
-namespace Spatie\ModelCleanup;
+namespace Spatie\ModelCleanup\Events;
+
+use Spatie\ModelCleanup\GetsCleanedUp;
 
 class ModelCleanedUpEvent
 {
