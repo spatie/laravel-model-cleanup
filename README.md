@@ -6,36 +6,29 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-model-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-model-cleanup)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
-This package will clean up unneeded records for your Eloquent models. 
+This package will clean up old records for your Eloquent models. 
 
-The only things you have to do is let your models implement the `GetsCleanedUp`-interface and schedule a command that performs the cleanup.
+The models you wish to clean up should have a method `cleanUp` which returns the configuration how the model should be cleaned up. Here's an example where all records older than 5 days will be cleaned up.
 
-Here's a quick example of a model that implements `GetsCleanedUp`:
-
-``` php
+```php
+use Illuminate\Database\Eloquent\Model;
+use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
 use Spatie\ModelCleanup\GetsCleanedUp;
-use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
 
-class LogItem extends Model implements GetsCleanedUp
+class YourModel extends Model implements GetsCleanedUp
 {
     ...
     
-     public static function cleanUp(CleanupConfig $config): void
+     public function cleanUp(CleanupConfig $config): void
      {
-        Chuncked
-
-        return $config
-            ->olderThanDays(10)
-            ->olderThan($carbon)
-            
-            ->scope(function(Builder $query))
-            ->chunkBy(10000);
-        // Delete all records older than a year
-        return $query->where('created_at', '<', Carbon::now()->subYear());
+         $config->olderThanDays(5);
      }
 }
 ```
+
+After registering the model in the config file, running the `clean:models` artisan command will delete all records that have been created more than 5 days ago.
+
+The package contains various other methods for specify which records should be deleted.
 
 ## Support us
 
@@ -66,95 +59,149 @@ This is the content of the published config file `model-cleanup.php`.
 return [
 
     /*
-     * All models that use the GetsCleanedUp interface in these directories will be cleaned.
-     */
-    'directories' => [
-        // app_path('models'),
-    ],
-
-    /*
-     * All models in this array that use the GetsCleanedUp interface will be cleaned.
+     * All models in this array that implement `Spatie\ModelCleanupGetsCleanedUp`
+     * will be cleaned.
      */
     'models' => [
-        // App\LogItem::class,
+        // App\Models\YourModel::class,
     ],
 
     /*
-     * Specify whether to search the configured `directories` recursively. 
-     * Set to false to only search for models directly inside the specified paths.
+     * Here you can specify the class that will return the configuration on how
+     * models should be cleaned up by default.
      */
-    'recursive' => true,
+    'default_cleanup_config' => Spatie\ModelCleanup\CleanupConfig\DefaultCleanUpConfigFactory::class,
 ];
+
+```
+
+Optionally, you can schedule the `Spatie\Model\CleanUpModelsCommand` to run at a frequency of which you want to clean up models. Here's an example where all models will be cleaned up every day at midnight.
+
+```php
+// in app/Console/Kernel.php
+
+protected function schedule(Schedule $schedule)
+{
+    $schedule->command(Spatie\Model\CleanUpModelsCommand::class)->daily();
+}
 ```
 
 ## Usage
 
-### Configure models to remove
-
 All models that you want to clean up must implement the `GetsCleanedUp`-interface. In the required
-`cleanUp`-method you can specify a query that selects the records that should be deleted.
+`cleanUp`-method you can specify which records are considered old and should be deleted.
 
-Let's say you have a model called `LogItem`, that you would like to  cleaned up. In this case your model could look like this:
-
-``` php
-use Spatie\ModelCleanup\GetsCleanedUp;
-use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
-
-class LogItem extends Model implements GetsCleanedUp
-{
-    ...
-    
-    public static function cleanUp(Builder $query) : Builder
-    {
-        return $query->where('created_at', '<', Carbon::now()->subYear());
-    }
-    
-}
-```
-
-When running the console command `clean:models` all logItems older than a year will be deleted.
-
-### Configure models to forceRemove
-
-All models that have the SoftDeletes trait that you want to clean up completly from the database must implement the `GetsForcedCleanedUp`-interface. In the required
-`forceCleanUp`-method you can specify a query that selects the records that should be forceDeleted.
-
-Let's say you have a model called `LogItem`, that you would like to  cleaned up. In this case your model could look like this:
-
-``` php
-use Spatie\ModelCleanup\GetsForcedCleanedUp;
-use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-class LogItem extends Model implements GetsForcedCleanedUp
-{
-    use SoftDeletes;
-    ...
-    
-    public static function forceCleanUp(Builder $query) : Builder
-    {
-        return $query->onlyTrashed()->where('deleted_at', '<', Carbon::now()->subDay());
-    }
-    
-}
-```
-
-When running the console command `clean:models` all logItems that were deleted more than a year from `Carbon::now` will be deleted completly from the database.
-
-### Command 
-
-When running the console command `clean:models` all the items on cleanUp will be deleted.
-
-This command can be scheduled in Laravel's console kernel.
+ Here's an example where all records older than 5 days will be cleaned up.
 
 ```php
-// app/Console/Kernel.php
+use Illuminate\Database\Eloquent\Model;
+use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
+use Spatie\ModelCleanup\GetsCleanedUp;
 
-protected function schedule(Schedule $schedule)
+class YourModel extends Model implements GetsCleanedUp
 {
-   $schedule->command('clean:models')->daily();
+    ...
+    
+     public function cleanUp(CleanupConfig $config): void
+     {
+        $config->olderThanDays(5);
+     }
+}
+```
+
+Next, you should register this model in the `models` key of the `model-cleanup` config file.
+
+```php
+// in config/model-cleanup.php
+
+return [
+    'models' => [
+        App\Models\YourModel::class,
+    ],
+    
+    // ...
+]
+```
+
+When running the console command `clean:models` all models older than 5 days will be deleted.
+
+### Available methods on `CleanupConfig`
+
+### `olderThanDays`
+
+Using this method you can mark records that have a `created_at` value older than a given number of days as old.
+
+Here's an example where all models older than 5 days are considered old.
+
+```php
+ public function cleanUp(CleanupConfig $config): void
+ {
+    $config->olderThanDays(5);
+ }
+```
+
+### `olderThan`
+
+The `olderThan` method accepts an instance of `Carbon`. All models with a `created_at` value before that instance, will be considered old.
+
+Here's an example where all models older than a year are considered old.
+
+```php
+ public function cleanUp(CleanupConfig $config): void
+ {
+    $config->olderThan(now()->subYear());
+ }
+```
+
+### `scope`
+
+Using the `scope` method you can make the query that will delete old records more specific. 
+
+Assume that your model has a `status` attribute. Only records with a status `inactive` may be cleaned up. Here's an example where all records with an `inactive` status that are older than 5 days will be cleaned up.
+
+```php
+ public function cleanUp(CleanupConfig $config): void
+ {
+    $config
+       ->olderThanDays(5);
+       ->scope(function (Illuminate\Database\Eloquent\Builder $query) {
+            $query->where('status', 'inactive');
+        });
+}
+```
+
+### `chunk`
+
+By default, models get cleaned up by performing a single `delete` query. When you want to clean up a very large table, this single query could lock your table for a long time. It even might not be possible to get the lock in the first place.
+
+To solve this, the package can delete records in chunks using the `chunk` method.
+
+In this example, all records older than 5 days will be deleted in chucks of a 1000 records.
+
+```php
+ public function cleanUp(CleanupConfig $config): void
+ {
+    $config
+       ->olderThanDays(5);
+       ->chunk(1000);
+}
+```
+
+The package will stop deleting records when there are no more left that should be deleted. 
+
+If you need more fine-grained control over when to stop deleting, you can pass a closure as a second argument to `chunk`. Returning `false` in the closure will stop the deletion process.
+
+In the example below, the deletion process will continue until all records older than 5 days are deleted or the record count of the model goes below 5000.
+
+```php
+ public function cleanUp(CleanupConfig $config): void
+ {
+    $config
+       ->olderThanDays(5);
+       ->chunk(1000, function() {
+            // continue the deletion process as long as there are more than 5000 records.
+            return YourModel::count() > 5000;
+       });
 }
 ```
 

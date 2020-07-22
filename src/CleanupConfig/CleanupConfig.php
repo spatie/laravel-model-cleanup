@@ -58,9 +58,4 @@ class CleanupConfig
 
         return $this;
     }
-
-    public function __sleep(): array
-    {
-        return ['a' => 1];
-    }
 }
