@@ -2,9 +2,9 @@
 
 All notable changes to `laravel-model-cleanup` will be documented in this file
 
-## 3.0.0 - 2020-07-XX
+## 3.0.0 - 2020-07-22
 
-- total rewrite of the package
+- Written from scratch (really)
 
 ## 2.5.0 - 2020-03-02
 
