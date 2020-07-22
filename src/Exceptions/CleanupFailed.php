@@ -17,7 +17,8 @@ class CleanupFailed extends Exception
                 $exceptionMessage = $exception['exception']->getMessage();
 
                 return "Model `$modelClass`: {$exceptionClass} - {$exceptionMessage}";
-            });
+            })
+            ->implode(PHP_EOL);
 
         return new static("Failed to clean up some models. {$listOfExceptions}");
     }
