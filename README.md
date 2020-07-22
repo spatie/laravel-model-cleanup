@@ -28,7 +28,7 @@ class YourModel extends Model implements GetsCleanedUp
 
 After registering the model in the config file, running the `clean:models` artisan command will delete all records that have been created more than 5 days ago.
 
-The package contains various other methods for specify which records should be deleted.
+The package contains various other methods for specifying which records should be deleted.
 
 ## Support us
 
