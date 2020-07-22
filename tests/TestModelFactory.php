@@ -1,9 +1,9 @@
 <?php
 
-namespace Spatie\ModelCleanup\Test;
+namespace Tests;
 
 use Carbon\Carbon;
-use Spatie\ModelCleanup\Test\Models\TestModel;
+use Tests\Models\TestModel;
 
 class TestModelFactory
 {

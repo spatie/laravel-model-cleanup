@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ModelCleanup\Test;
+namespace Tests;
 
 use Carbon\Carbon;
 use Closure;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
-use Spatie\ModelCleanup\Test\Models\TestModel;
+use Tests\Models\TestModel;
 use Spatie\TestTime\TestTime;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase

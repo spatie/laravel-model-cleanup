@@ -35,7 +35,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\ModelCleanup\\Test\\": "tests"
+            "Tests\\": "tests"
         }
     },
     "scripts": {

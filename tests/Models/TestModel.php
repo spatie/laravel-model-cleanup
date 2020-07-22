@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ModelCleanup\Test\Models;
+namespace Tests\Models;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
