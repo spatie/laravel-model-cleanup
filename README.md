@@ -177,9 +177,7 @@ Assume that your model has a `status` attribute. Only records with a status `ina
  {
     $config
        ->olderThanDays(5);
-       ->scope(function (Illuminate\Database\Eloquent\Builder $query) {
-            $query->where('status', 'inactive');
-        });
+       ->scope(fn (Illuminate\Database\Eloquent\Builder $query) => $query->where('status', 'inactive');
 }
 ```
 
@@ -211,10 +209,7 @@ In the example below, the deletion process will continue until all records older
  {
     $config
        ->olderThanDays(5);
-       ->chunk(1000, function() {
-            // continue the deletion process as long as there are more than 5000 records.
-            return YourModel::count() > 5000;
-       });
+       ->chunk(1000, fn() => YourModel::count() > 5000);
 }
 ```
 
