@@ -153,6 +153,19 @@ Here's an example where all models older than a year are considered old.
  }
 ```
 
+### `dateAttribute`
+
+When using `olderThanDays` and `olderThan` methods, the deletion query that is built up behind the scenes will use the `created_at` column. You can specify an alternative column, using the `dateAttribute` method.
+
+```php
+ public function cleanUp(CleanupConfig $config): void
+ {
+    $config
+        ->olderThanDays(5)
+        ->dateAttribute('custom_date_column');
+ }
+```
+
 ### `scope`
 
 Using the `scope` method you can make the query that will delete old records more specific. 
@@ -249,9 +262,9 @@ With this in place all models will be cleaned up in a chunked way.
 
 ## Events
 
-After the model has been cleaned `Spatie\ModelCleanup\ModelWasCleanedUp` will be fired even if there were no records deleted.
+After the model has been cleaned `Spatie\ModelCleanup\Events\ModelCleanedUp` will be fired even if there were no records deleted.
 
-It has two public properties: `modelClass` and `numberOfDeletedRecords`.
+It has two public properties: `model`, which contains an instance of the model which was cleaned up. and `numberOfDeletedRecords`.
 
 ## Changelog
 
