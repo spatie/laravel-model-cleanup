@@ -15,7 +15,7 @@ use Spatie\TestTime\TestTime;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -61,33 +61,6 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             ->toArray();
 
         $this->assertEquals($expectedDates, $actualDates);
-    }
-
-    protected function useCleanupConfig(Closure $closure)
-    {
-        TestModel::setCleanupConfigClosure($closure);
-
-        config()->set('model-cleanup.models', [
-            TestModel::class,
-        ]);
-    }
-
-    protected function assertDeleteQueriesExecuted(int $expectedCount)
-    {
-        $actualCount = collect(DB::getQueryLog())
-            ->map(function (array $queryProperties) {
-                return $queryProperties['query'];
-            })
-            ->filter(function (string $query) {
-                return Str::startsWith($query, 'delete');
-            })
-            ->count();
-
-        $this->assertEquals(
-            $expectedCount,
-            $actualCount,
-            "Expected {$expectedCount} delete queries, but {$actualCount} delete queries where executed."
-        );
     }
 
     protected function assertExceptionThrown(
