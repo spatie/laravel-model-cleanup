@@ -8,7 +8,6 @@ use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
 use Spatie\ModelCleanup\Exceptions\CleanupFailed;
-use Spatie\ModelCleanup\Exceptions\InvalidCleanupConfig;
 use Spatie\ModelCleanup\Test\Models\TestModel;
 use Spatie\TestTime\TestTime;
 
