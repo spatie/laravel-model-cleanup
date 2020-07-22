@@ -45,7 +45,6 @@ it('can delete old records that are older than a given number of days', function
     });
 });
 
-
 class CleanupTest extends TestCase
 {
     public function setUp(): void

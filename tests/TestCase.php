@@ -3,15 +3,13 @@
 namespace Tests;
 
 use Carbon\Carbon;
-use Closure;
 use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
-use Tests\Models\TestModel;
 use Spatie\TestTime\TestTime;
+use Tests\Models\TestModel;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
