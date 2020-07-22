@@ -205,6 +205,48 @@ In the example below, the deletion process will continue until all records older
 }
 ```
 
+## Setting a default clean up config
+
+Imagine you want to clean up old records for old models in a chunked way for all models. Instead of using `chunk` on each model separately, you can configure this on a global level.
+
+ To get started you should create a class that implements `Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory`. The `getCleanupConfig` method should return an instance of `CleanupConfig` that will be used for all models.
+ 
+```php
+namespace App\Support;
+
+use Spatie\ModelCleanup\CleanupConfig\CleanupConfig;
+use Spatie\ModelCleanup\CleanupConfig\CleanupConfigFactory;
+
+class ChunkCleanupConfigFactory implements CleanupConfigFactory
+{
+    public static function getCleanupConfig(): CleanupConfig
+    {
+        return CleanupConfig::new()->chunk(1000);
+    }
+}
+```
+
+In the `model-cleanup` config file you should specify the name of this class in the `default_cleanup_config` key.
+
+```php
+return [
+    // ...
+
+    'default_cleanup_config' => App\Support\ChunkCleanupConfigFactory::class
+];
+```
+
+With this in place all models will be cleaned up in a chunked way.
+
+```php
+ public function cleanUp(CleanupConfig $config): void
+ {
+    // even though `chunk` isn't specified, the model will be cleaned up in a chunked way
+    $config->olderThanDays(5);
+}
+```
+
+
 ## Events
 
 After the model has been cleaned `Spatie\ModelCleanup\ModelWasCleanedUp` will be fired even if there were no records deleted.
