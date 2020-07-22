@@ -281,7 +281,6 @@ We publish all received postcards [on our company website](https://spatie.be/en/
 
 ## Credits
 
-- [Jolita Grazyte](https://github.com/JolitaGrazyte)
 - [Freek Van der Herten](https://github.com/freekmurze)
 - [All Contributors](../../contributors)
 
