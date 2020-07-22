@@ -26,7 +26,9 @@
         "orchestra/testbench":"^5.3",
         "mockery/mockery": "^1.0",
         "spatie/test-time": "^1.2",
-        "vimeo/psalm": "^3.11"
+        "vimeo/psalm": "^3.11",
+        "pestphp/pest": "^0.2.3",
+        "pestphp/pest-plugin-laravel": "^0.2.0"
     },
     "autoload": {
         "psr-4": {
