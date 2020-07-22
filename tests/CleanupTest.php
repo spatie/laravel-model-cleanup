@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
+use Spatie\ModelCleanup\Exceptions\CleanupFailed;
 use Spatie\ModelCleanup\Exceptions\InvalidCleanupConfig;
 use Spatie\ModelCleanup\Test\Models\TestModel;
 use Spatie\TestTime\TestTime;
@@ -252,7 +253,7 @@ class CleanupTest extends TestCase
 
         $this->assertExceptionThrown(function () {
             $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
-        }, InvalidCleanupConfig::class);
+        }, CleanupFailed::class);
 
         $this->assertEquals(10, TestModel::count());
     }

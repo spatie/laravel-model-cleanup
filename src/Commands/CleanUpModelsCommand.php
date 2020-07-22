@@ -3,10 +3,12 @@
 namespace Spatie\ModelCleanup\Commands;
 
 use Closure;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
+use Spatie\ModelCleanup\Exceptions\CleanupFailed;
 use Spatie\ModelCleanup\Exceptions\InvalidCleanupConfig;
 use Spatie\ModelCleanup\GetsCleanedUp;
 
@@ -20,9 +22,21 @@ class CleanUpModelsCommand extends Command
     {
         $this->comment('Start cleaning models...');
 
+        $exceptions = [];
+
         collect(config('model-cleanup.models'))
-            ->map(fn (string $className) => new $className)
-            ->each(fn (GetsCleanedUp $model) => $this->cleanUp($model));
+                ->map(fn (string $className) => new $className)
+                ->each(function (GetsCleanedUp $model) use (&$exceptions) {
+                    try {
+                        $this->cleanUp($model);
+                    } catch (Exception $exception) {
+                        $exceptions[] = compact('model', 'exception');
+                    }
+                });
+
+        if (count($exceptions)) {
+            throw CleanupFailed::create($exceptions);
+        }
 
         $this->comment('All done!');
     }
@@ -70,7 +84,7 @@ class CleanUpModelsCommand extends Command
 
         event(new ModelCleanedUpEvent($model, $totalNumberOfDeletedRecords));
 
-        $this->info('Deleted ' . $totalNumberOfDeletedRecords . ' ' . Str::plural('record', $totalNumberOfDeletedRecords) .   " from {$modelClass}.");
+        $this->info('Deleted ' . $totalNumberOfDeletedRecords . ' ' . Str::plural('record', $totalNumberOfDeletedRecords) . " from {$modelClass}.");
     }
 
     protected function shouldContinueDeleting(int $numberOfRecordDeleted, Closure $continueWhile): bool
