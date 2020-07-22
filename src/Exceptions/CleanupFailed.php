@@ -19,6 +19,6 @@ class CleanupFailed extends Exception
                 return "Model `$modelClass`: {$exceptionClass} - {$exceptionMessage}";
             });
 
-        return new static("Failed to clean up some models: {$listOfExceptions}");
+        return new static("Failed to clean up some models. {$listOfExceptions}");
     }
 }
