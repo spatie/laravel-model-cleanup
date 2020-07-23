@@ -20,32 +20,34 @@ class CleanUpModelsCommand extends Command
 
     public function handle()
     {
-        $this->comment('Start cleaning models...');
+        $this->info('Start cleaning models...');
 
         $exceptions = [];
 
         collect(config('model-cleanup.models'))
-                ->map(fn (string $className) => new $className)
-                ->each(function (GetsCleanedUp $model) use (&$exceptions) {
-                    try {
-                        $this->cleanUp($model);
-                    } catch (Exception $exception) {
-                        $exceptions[] = compact('model', 'exception');
-                    }
-                });
+            ->map(fn (string $className) => new $className)
+            ->each(function (GetsCleanedUp $model) use (&$exceptions) {
+                try {
+                    $this->cleanUp($model);
+                } catch (Exception $exception) {
+                    $exceptions[] = compact('model', 'exception');
+
+                    $this->error("Could not clean up model. Exception `" . get_class($exception) . "` occurred: {$exception->getMessage()}");
+                }
+            });
 
         if (count($exceptions)) {
             throw CleanupFailed::create($exceptions);
         }
 
-        $this->comment('All done!');
+        $this->info('All done!');
     }
 
     protected function cleanUp(GetsCleanedUp $model)
     {
         $modelClass = get_class($model);
 
-        $this->info("Cleaning {$modelClass}...");
+        $this->comment("Cleaning {$modelClass}...");
 
         $cleanupConfig = new CleanupConfig();
 
@@ -84,7 +86,7 @@ class CleanUpModelsCommand extends Command
 
         event(new ModelCleanedUpEvent($model, $totalNumberOfDeletedRecords));
 
-        $this->info('Deleted ' . $totalNumberOfDeletedRecords . ' ' . Str::plural('record', $totalNumberOfDeletedRecords) . " from {$modelClass}.");
+        $this->comment('Deleted ' . $totalNumberOfDeletedRecords . ' ' . Str::plural('record', $totalNumberOfDeletedRecords) . " from {$modelClass}.");
     }
 
     protected function shouldContinueDeleting(int $numberOfRecordDeleted, Closure $continueWhile): bool
