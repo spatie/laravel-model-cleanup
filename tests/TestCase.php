@@ -2,14 +2,11 @@
 
 namespace Tests;
 
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
 use Spatie\TestTime\TestTime;
-use Tests\Models\TestModel;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -49,30 +46,5 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->timestamp('custom_date')->nullable();
             $table->string('status')->default('active');
         });
-    }
-
-    protected function assertModelsExistForDays(array $expectedDates)
-    {
-        $actualDates = TestModel::all()
-            ->pluck('created_at')
-            ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
-            ->toArray();
-
-        $this->assertEquals($expectedDates, $actualDates);
-    }
-
-    protected function assertExceptionThrown(
-        callable $callable,
-        string $expectedExceptionClass = Exception::class
-    ): void {
-        try {
-            $callable();
-
-            $this->assertTrue(false, "Expected exception `{$expectedExceptionClass}` was not thrown.");
-        } catch (Exception $exception) {
-            $actualExceptionClass = get_class($exception);
-
-            $this->assertInstanceOf($expectedExceptionClass, $exception, "Unexpected exception `$actualExceptionClass` thrown. Expected exception `$expectedExceptionClass`");
-        }
     }
 }

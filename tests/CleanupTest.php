@@ -5,6 +5,7 @@ namespace Tests;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Event;
 use function Pest\Laravel\artisan;
+use function PHPUnit\Framework\assertEquals;
 use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
@@ -28,7 +29,7 @@ it('can delete old records that are older than a given number of days', function
 
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
-    $this->assertModelsExistForDays([
+    assertModelsExistForDays([
         '2020-01-03',
         '2020-01-02',
         '2020-01-01',
@@ -45,222 +46,189 @@ it('can delete old records that are older than a given number of days', function
     });
 });
 
-class CleanupTest extends TestCase
-{
-    public function setUp(): void
-    {
-        parent::setUp();
+it('can delete old records that are older than a given date', function () {
+    useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+        $cleanupConfig->olderThan(now()->subDays(2));
+    });
 
-        Event::fake();
+    artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
-        TestModelFactory::new()
-            ->startingFrom(now()->addDays(3))
-            ->forPreviousDays(10)
-            ->create();
-    }
+    assertModelsExistForDays([
+        '2020-01-03',
+        '2020-01-02',
+        '2020-01-01',
+        '2019-12-31',
+        '2019-12-30',
+    ]);
+});
 
-    /** @test */
-    public function it_can_delete_old_records_that_are_older_than_a_given_date()
-    {
-        useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-            $cleanupConfig->olderThan(now()->subDays(2));
-        });
+it('can use a scope to filter records to be deleted', function () {
+    TestModel::query()
+        ->whereDate('created_at', '2019-12-29')
+        ->update(['status' => 'inactive']);
 
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+    useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+        $cleanupConfig
+            ->olderThanDays(2)
+            ->scope(function (Builder $query) {
+                $query->where('status', 'inactive');
+            });
+    });
 
-        $this->assertModelsExistForDays([
-            '2020-01-03',
-            '2020-01-02',
-            '2020-01-01',
-            '2019-12-31',
-            '2019-12-30',
-        ]);
-    }
+    artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
-    /** @test */
-    public function it_can_use_a_scope_to_filter_records_to_be_deleted()
-    {
-        TestModel::query()
-            ->whereDate('created_at', '2019-12-29')
-            ->update(['status' => 'inactive']);
+    assertModelsExistForDays([
+        '2020-01-03',
+        '2020-01-02',
+        '2020-01-01',
+        '2019-12-31',
+        '2019-12-30',
+        '2019-12-28',
+        '2019-12-27',
+        '2019-12-26',
+        '2019-12-25',
+    ]);
+});
 
-        useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-            $cleanupConfig
-                ->olderThanDays(2)
-                ->scope(function (Builder $query) {
-                    $query->where('status', 'inactive');
-                });
-        });
+test('using a scope will not delete any records not selected by older than', function () {
+    TestModel::query()->update(['status' => 'inactive']);
 
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+    useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+        $cleanupConfig
+            ->olderThanDays(2)
+            ->scope(function (Builder $query) {
+                $query->where('status', 'inactive');
+            });
+    });
 
-        $this->assertModelsExistForDays([
-            '2020-01-03',
-            '2020-01-02',
-            '2020-01-01',
-            '2019-12-31',
-            '2019-12-30',
-            '2019-12-28',
-            '2019-12-27',
-            '2019-12-26',
-            '2019-12-25',
-        ]);
-    }
+    artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
-    /** @test */
-    public function using_a_scope_will_not_delete_any_records_not_selected_by_older_than()
-    {
-        TestModel::query()->update(['status' => 'inactive']);
+    assertModelsExistForDays([
+        '2020-01-03',
+        '2020-01-02',
+        '2020-01-01',
+        '2019-12-31',
+        '2019-12-30',
+    ]);
+});
 
-        useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-            $cleanupConfig
-                ->olderThanDays(2)
-                ->scope(function (Builder $query) {
-                    $query->where('status', 'inactive');
-                });
-        });
+test('if there is no older than used than the scope can target any record', function () {
+    TestModel::query()->whereDate('created_at', '<>', '2020-01-01')->update(['status' => 'inactive']);
 
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+    useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+        $cleanupConfig
+            ->scope(function (Builder $query) {
+                $query->where('status', 'inactive');
+            });
+    });
 
-        $this->assertModelsExistForDays([
-            '2020-01-03',
-            '2020-01-02',
-            '2020-01-01',
-            '2019-12-31',
-            '2019-12-30',
-        ]);
-    }
+    artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
-    /** @test */
-    public function if_there_is_no_older_than_used_than_the_scope_can_target_any_record()
-    {
-        TestModel::query()->whereDate('created_at', '<>', '2020-01-01')->update(['status' => 'inactive']);
+    assertModelsExistForDays([
+        '2020-01-01',
+    ]);
+});
 
-        useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-            $cleanupConfig
-                ->scope(function (Builder $query) {
-                    $query->where('status', 'inactive');
-                });
-        });
+it('can delete old records in a chunked way', function () {
+    useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+        $cleanupConfig
+            ->olderThanDays(2)
+            ->chunk(2);
+    });
 
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+    artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
-        $this->assertModelsExistForDays([
-            '2020-01-01',
-        ]);
-    }
+    assertModelsExistForDays([
+        '2020-01-03',
+        '2020-01-02',
+        '2020-01-01',
+        '2019-12-31',
+        '2019-12-30',
+    ]);
 
-    /** @test */
-    public function it_can_delete_old_records_in_a_chunked_way()
-    {
-        useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-            $cleanupConfig
-                ->olderThanDays(2)
-                ->chunk(2);
-        });
+    assertDeleteQueriesExecuted(3);
+});
 
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+it('can use custom continue while closure when deleting old records in a chunked way', function () {
+    useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+        $cleanupConfig
+            ->olderThanDays(2)
+            ->chunk(2, function (int $numberOfRecordsDeleted) {
+                assertEquals(2, $numberOfRecordsDeleted);
 
-        $this->assertModelsExistForDays([
-            '2020-01-03',
-            '2020-01-02',
-            '2020-01-01',
-            '2019-12-31',
-            '2019-12-30',
-        ]);
+                return false;
+            });
+    });
 
-        assertDeleteQueriesExecuted(3);
-    }
+    artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
-    /** @test */
-    public function it_can_use_custom_continue_while_closure_when_deleting_old_records_in_a_chunked_way()
-    {
-        useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-            $cleanupConfig
-                ->olderThanDays(2)
-                ->chunk(2, function (int $numberOfRecordsDeleted) {
-                    assertEquals(2, $numberOfRecordsDeleted);
+    assertModelsExistForDays([
+        '2020-01-03',
+        '2020-01-02',
+        '2020-01-01',
+        '2019-12-31',
+        '2019-12-30',
+        '2019-12-27',
+        '2019-12-26',
+        '2019-12-25',
+    ]);
 
-                    return false;
-                });
-        });
+    assertDeleteQueriesExecuted(1);
+});
 
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+it('will stop deleting when no records are being deleted anymore', function () {
+    useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+        $cleanupConfig
+            ->olderThanDays(2)
+            ->chunk(2, function () {
+                return true;
+            });
+    });
 
-        $this->assertModelsExistForDays([
-            '2020-01-03',
-            '2020-01-02',
-            '2020-01-01',
-            '2019-12-31',
-            '2019-12-30',
-            '2019-12-27',
-            '2019-12-26',
-            '2019-12-25',
-        ]);
+    artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
-        assertDeleteQueriesExecuted(1);
-    }
+    assertModelsExistForDays([
+        '2020-01-03',
+        '2020-01-02',
+        '2020-01-01',
+        '2019-12-31',
+        '2019-12-30',
+    ]);
 
-    /** @test */
-    public function it_will_stop_deleting_when_no_records_are_being_deleted_anymore()
-    {
-        useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-            $cleanupConfig
-                ->olderThanDays(2)
-                ->chunk(2, function () {
-                    return true;
-                });
-        });
+    assertDeleteQueriesExecuted(4);
 
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+    Event::assertDispatched(function (ModelCleanedUpEvent $event) {
+        assertEquals(5, $event->numberOfDeletedRecords);
 
-        $this->assertModelsExistForDays([
-            '2020-01-03',
-            '2020-01-02',
-            '2020-01-01',
-            '2019-12-31',
-            '2019-12-30',
-        ]);
+        return true;
+    });
+});
 
-        assertDeleteQueriesExecuted(4);
+it('can use a custom date attribute', function () {
+    TestModel::query()->update(['custom_date' => now()]);
 
-        Event::assertDispatched(function (ModelCleanedUpEvent $event) {
-            assertEquals(5, $event->numberOfDeletedRecords);
+    useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+        $cleanupConfig
+            ->useDateAttribute('custom_date')
+            ->olderThanDays(20);
+    });
 
-            return true;
-        });
-    }
+    TestTime::addDays(20);
+    artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+    assertEquals(10, TestModel::count());
 
-    /** @test */
-    public function it_can_use_a_custom_date_attribute()
-    {
-        TestModel::query()->update(['custom_date' => now()]);
+    TestTime::addDay();
+    artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+    assertEquals(0, TestModel::count());
+});
 
-        useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-            $cleanupConfig
-                ->useDateAttribute('custom_date')
-                ->olderThanDays(20);
-        });
+it('will not delete all records when nothing has been specified on cleanup config', function () {
+    useCleanupConfig(function (CleanupConfig $cleanupConfig) {
+    });
 
-        TestTime::addDays(20);
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
-        assertEquals(10, TestModel::count());
+    assertExceptionThrown(function () {
+        artisan(CleanUpModelsCommand::class)->assertExitCode(0);
+    }, CleanupFailed::class);
 
-        TestTime::addDay();
-        $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
-        assertEquals(0, TestModel::count());
-    }
-
-    /** @test */
-    public function it_will_not_delete_all_records_when_nothing_has_been_specified_on_cleanup_config()
-    {
-        useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-        });
-
-        $this->assertExceptionThrown(function () {
-            $this->artisan(CleanUpModelsCommand::class)->assertExitCode(0);
-        }, CleanupFailed::class);
-
-        assertEquals(10, TestModel::count());
-    }
-}
+    assertEquals(10, TestModel::count());
+});
