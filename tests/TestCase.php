@@ -2,20 +2,16 @@
 
 namespace Tests;
 
-use Carbon\Carbon;
-use Closure;
-use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
 use Spatie\TestTime\TestTime;
 use Tests\Models\TestModel;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -51,57 +47,5 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->timestamp('custom_date')->nullable();
             $table->string('status')->default('active');
         });
-    }
-
-    protected function assertModelsExistForDays(array $expectedDates)
-    {
-        $actualDates = TestModel::all()
-            ->pluck('created_at')
-            ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
-            ->toArray();
-
-        $this->assertEquals($expectedDates, $actualDates);
-    }
-
-    protected function useCleanupConfig(Closure $closure)
-    {
-        TestModel::setCleanupConfigClosure($closure);
-
-        config()->set('model-cleanup.models', [
-            TestModel::class,
-        ]);
-    }
-
-    protected function assertDeleteQueriesExecuted(int $expectedCount)
-    {
-        $actualCount = collect(DB::getQueryLog())
-            ->map(function (array $queryProperties) {
-                return $queryProperties['query'];
-            })
-            ->filter(function (string $query) {
-                return Str::startsWith($query, 'delete');
-            })
-            ->count();
-
-        $this->assertEquals(
-            $expectedCount,
-            $actualCount,
-            "Expected {$expectedCount} delete queries, but {$actualCount} delete queries where executed."
-        );
-    }
-
-    protected function assertExceptionThrown(
-        callable $callable,
-        string $expectedExceptionClass = Exception::class
-    ): void {
-        try {
-            $callable();
-
-            $this->assertTrue(false, "Expected exception `{$expectedExceptionClass}` was not thrown.");
-        } catch (Exception $exception) {
-            $actualExceptionClass = get_class($exception);
-
-            $this->assertInstanceOf($expectedExceptionClass, $exception, "Unexpected exception `$actualExceptionClass` thrown. Expected exception `$expectedExceptionClass`");
-        }
     }
 }
