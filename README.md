@@ -59,7 +59,7 @@ This is the content of the published config file `model-cleanup.php`.
 return [
 
     /*
-     * All models in this array that implement `Spatie\ModelCleanupGetsCleanedUp`
+     * All models in this array that implement `Spatie\ModelCleanup\GetsCleanedUp`
      * will be cleaned.
      */
     'models' => [
@@ -76,7 +76,7 @@ Optionally, you can schedule the `Spatie\Model\CleanUpModelsCommand` to run at a
 
 protected function schedule(Schedule $schedule)
 {
-    $schedule->command(Spatie\Model\CleanUpModelsCommand::class)->daily();
+    $schedule->command(\Spatie\Model\CleanUpModelsCommand::class)->daily();
 }
 ```
 
