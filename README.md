@@ -170,7 +170,7 @@ Assume that your model has a `status` attribute. Only records with a status `ina
  public function cleanUp(CleanupConfig $config): void
  {
     $config
-       ->olderThanDays(5);
+       ->olderThanDays(5)
        ->scope(fn (Illuminate\Database\Eloquent\Builder $query) => $query->where('status', 'inactive');
 }
 ```
@@ -187,7 +187,7 @@ In this example, all records older than 5 days will be deleted in chucks of a 10
  public function cleanUp(CleanupConfig $config): void
  {
     $config
-       ->olderThanDays(5);
+       ->olderThanDays(5)
        ->chunk(1000);
 }
 ```
@@ -202,7 +202,7 @@ In the example below, the deletion process will continue until all records older
  public function cleanUp(CleanupConfig $config): void
  {
     $config
-       ->olderThanDays(5);
+       ->olderThanDays(5)
        ->chunk(1000, fn() => YourModel::count() > 5000);
 }
 ```
