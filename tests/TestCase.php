@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Spatie\ModelCleanup\ModelCleanupServiceProvider;
 use Spatie\TestTime\TestTime;
-use Tests\Models\TestModel;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
