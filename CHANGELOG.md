@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-model-cleanup` will be documented in this file
 
+## 3.0.5 - 2020-07-23
+
+- improve command output
+
 ## 3.0.4 - 2020-07-23
 
 - improve command output
