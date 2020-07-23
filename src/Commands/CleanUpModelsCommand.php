@@ -88,8 +88,6 @@ class CleanUpModelsCommand extends Command
             if ($shouldContinueDeleting) {
                 $this->comment('Deleted ' . Str::plural('record', $totalNumberOfDeletedRecords) ." for {$modelClass}. Finding more deletable records...");
             }
-
-
         } while ($shouldContinueDeleting);
 
         event(new ModelCleanedUpEvent($model, $totalNumberOfDeletedRecords));
