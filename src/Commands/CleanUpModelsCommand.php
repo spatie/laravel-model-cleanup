@@ -34,6 +34,8 @@ class CleanUpModelsCommand extends Command
 
                     $this->error("Could not clean up model. Exception `" . get_class($exception) . "` occurred: {$exception->getMessage()}");
                 }
+
+                $this->info('');
             });
 
         if (count($exceptions)) {
