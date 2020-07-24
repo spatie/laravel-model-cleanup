@@ -171,7 +171,7 @@ Assume that your model has a `status` attribute. Only records with a status `ina
  {
     $config
        ->olderThanDays(5)
-       ->scope(fn (Illuminate\Database\Eloquent\Builder $query) => $query->where('status', 'inactive');
+       ->scope(fn (Illuminate\Database\Eloquent\Builder $query) => $query->where('status', 'inactive'));
 }
 ```
 
