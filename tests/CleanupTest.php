@@ -12,6 +12,7 @@ use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
 use Spatie\ModelCleanup\Exceptions\CleanupFailed;
 use Spatie\TestTime\TestTime;
 use Tests\Models\TestModel;
+use Tests\Models\TestSoftDeletableModel;
 
 beforeEach(function () {
     Event::fake();
@@ -37,7 +38,7 @@ it('can delete old records that are older than a given number of days', function
         '2019-12-30',
     ]);
 
-    assertDeleteQueriesExecuted(1);
+    assertDeleteQueriesExecuted(2);
 
     Event::assertDispatched(function (ModelCleanedUpEvent $event) {
         assertEquals(5, $event->numberOfDeletedRecords);
@@ -67,6 +68,10 @@ it('can use a scope to filter records to be deleted', function () {
         ->whereDate('created_at', '2019-12-29')
         ->update(['status' => 'inactive']);
 
+    TestSoftDeletableModel::query()
+        ->whereDate('created_at', '2019-12-29')
+        ->update(['status' => 'inactive']);
+
     useCleanupConfig(function (CleanupConfig $cleanupConfig) {
         $cleanupConfig
             ->olderThanDays(2)
@@ -92,6 +97,7 @@ it('can use a scope to filter records to be deleted', function () {
 
 test('using a scope will not delete any records not selected by older than', function () {
     TestModel::query()->update(['status' => 'inactive']);
+    TestSoftDeletableModel::query()->update(['status' => 'inactive']);
 
     useCleanupConfig(function (CleanupConfig $cleanupConfig) {
         $cleanupConfig
@@ -114,6 +120,7 @@ test('using a scope will not delete any records not selected by older than', fun
 
 test('if there is no older than used than the scope can target any record', function () {
     TestModel::query()->whereDate('created_at', '<>', '2020-01-01')->update(['status' => 'inactive']);
+    TestSoftDeletableModel::query()->whereDate('created_at', '<>', '2020-01-01')->update(['status' => 'inactive']);
 
     useCleanupConfig(function (CleanupConfig $cleanupConfig) {
         $cleanupConfig
@@ -146,7 +153,7 @@ it('can delete old records in a chunked way', function () {
         '2019-12-30',
     ]);
 
-    assertDeleteQueriesExecuted(3);
+    assertDeleteQueriesExecuted(6);
 });
 
 it('can use custom continue while closure when deleting old records in a chunked way', function () {
@@ -173,7 +180,7 @@ it('can use custom continue while closure when deleting old records in a chunked
         '2019-12-25',
     ]);
 
-    assertDeleteQueriesExecuted(1);
+    assertDeleteQueriesExecuted(2);
 });
 
 it('will stop deleting when no records are being deleted anymore', function () {
@@ -195,7 +202,7 @@ it('will stop deleting when no records are being deleted anymore', function () {
         '2019-12-30',
     ]);
 
-    assertDeleteQueriesExecuted(4);
+    assertDeleteQueriesExecuted(8);
 
     Event::assertDispatched(function (ModelCleanedUpEvent $event) {
         assertEquals(5, $event->numberOfDeletedRecords);
@@ -206,6 +213,7 @@ it('will stop deleting when no records are being deleted anymore', function () {
 
 it('can use a custom date attribute', function () {
     TestModel::query()->update(['custom_date' => now()]);
+    TestSoftDeletableModel::query()->update(['custom_date' => now()]);
 
     useCleanupConfig(function (CleanupConfig $cleanupConfig) {
         $cleanupConfig
@@ -216,10 +224,12 @@ it('can use a custom date attribute', function () {
     TestTime::addDays(20);
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
     assertEquals(10, TestModel::count());
+    assertEquals(10, TestSoftDeletableModel::count());
 
     TestTime::addDay();
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
     assertEquals(0, TestModel::count());
+    assertEquals(0, TestSoftDeletableModel::count());
 });
 
 it('will not delete all records when nothing has been specified on cleanup config', function () {
@@ -231,4 +241,5 @@ it('will not delete all records when nothing has been specified on cleanup confi
     }, CleanupFailed::class);
 
     assertEquals(10, TestModel::count());
+    assertEquals(10, TestSoftDeletableModel::count());
 });

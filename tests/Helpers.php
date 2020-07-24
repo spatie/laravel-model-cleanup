@@ -11,13 +11,16 @@ use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertInstanceOf;
 use function PHPUnit\Framework\assertTrue;
 use Tests\Models\TestModel;
+use Tests\Models\TestSoftDeletableModel;
 
 function useCleanupConfig(Closure $closure)
 {
     TestModel::setCleanupConfigClosure($closure);
+    TestSoftDeletableModel::setCleanupConfigClosure($closure);
 
     config()->set('model-cleanup.models', [
         TestModel::class,
+        TestSoftDeletableModel::class,
     ]);
 }
 
@@ -46,7 +49,13 @@ function assertModelsExistForDays(array $expectedDates)
         ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
         ->toArray();
 
+    $actualDatesSoftDeletable = TestSoftDeletableModel::all()
+        ->pluck('created_at')
+        ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
+        ->toArray();
+
     assertEquals($expectedDates, $actualDates);
+    assertEquals($expectedDates, $actualDatesSoftDeletable);
 }
 
 function assertExceptionThrown(

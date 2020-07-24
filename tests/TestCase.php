@@ -46,5 +46,14 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->timestamp('custom_date')->nullable();
             $table->string('status')->default('active');
         });
+
+        Schema::create('test_soft_deletable_models', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
+            $table->timestamp('deleted_at')->nullable();
+            $table->timestamp('custom_date')->nullable();
+            $table->string('status')->default('active');
+        });
     }
 }
