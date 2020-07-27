@@ -5,6 +5,7 @@ namespace Spatie\ModelCleanup\Commands;
 use Closure;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\Events\ModelCleanedUpEvent;
@@ -76,7 +77,7 @@ class CleanUpModelsCommand extends Command
                 $query->limit($cleanupConfig->chunkBy);
             }
 
-            $numberOfDeletedRecords = (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($model)) 
+            $numberOfDeletedRecords = (in_array(SoftDeletes::class, class_uses($model)) 
                ? $query->forceDelete()
                : $query->delete());
 
