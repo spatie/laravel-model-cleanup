@@ -16,7 +16,7 @@ beforeEach(function () {
         ->create();
 });
 
-it('can force delete old trashed models', function () {
+it('can delete old soft deletable records that are older than a given number of days', function () {
     useCleanupConfig(function (CleanupConfig $cleanupConfig) {
         $cleanupConfig->olderThanDays(2);
     }, TestSoftDeletableModel::class);
