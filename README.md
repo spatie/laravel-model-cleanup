@@ -147,16 +147,16 @@ Here's an example where all models older than a year are considered old.
  }
 ```
 
-### `dateAttribute`
+### `useDateAttribute`
 
-When using `olderThanDays` and `olderThan` methods, the deletion query that is built up behind the scenes will use the `created_at` column. You can specify an alternative column, using the `dateAttribute` method.
+When using `olderThanDays` and `olderThan` methods, the deletion query that is built up behind the scenes will use the `created_at` column. You can specify an alternative column, using the `useDateAttribute` method.
 
 ```php
  public function cleanUp(CleanupConfig $config): void
  {
     $config
         ->olderThanDays(5)
-        ->dateAttribute('custom_date_column');
+        ->useDateAttribute('custom_date_column');
  }
 ```
 
