@@ -49,13 +49,7 @@ function assertModelsExistForDays(array $expectedDates)
         ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
         ->toArray();
 
-    $actualDatesSoftDeletable = TestSoftDeletableModel::all()
-        ->pluck('created_at')
-        ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
-        ->toArray();
-
     assertEquals($expectedDates, $actualDates);
-    assertEquals($expectedDates, $actualDatesSoftDeletable);
 }
 
 function assertExceptionThrown(

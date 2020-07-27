@@ -4,7 +4,6 @@ namespace Tests;
 
 use Carbon\Carbon;
 use Tests\Models\TestModel;
-use Tests\Models\TestSoftDeletableModel;
 
 class TestModelFactory
 {
@@ -36,9 +35,7 @@ class TestModelFactory
         $createdAt = $this->startingFrom;
 
         foreach (range(1, $this->numberOfDays) as $i) {
-            $date = $createdAt->subDay();
-            TestModel::create(['created_at' => $date]);
-            TestSoftDeletableModel::create(['created_at' => $date]);
+            TestModel::create(['created_at' => $createdAt->subDay()]);
         }
     }
 }
