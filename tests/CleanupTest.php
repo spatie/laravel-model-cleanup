@@ -25,7 +25,7 @@ beforeEach(function () {
 it('can delete old records that are older than a given number of days', function () {
     useCleanupConfig(function (CleanupConfig $cleanupConfig) {
         $cleanupConfig->olderThanDays(2);
-    });
+    }, TestModel::class);
 
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
@@ -35,7 +35,7 @@ it('can delete old records that are older than a given number of days', function
         '2020-01-01',
         '2019-12-31',
         '2019-12-30',
-    ]);
+    ], TestModel::class);
 
     assertDeleteQueriesExecuted(1);
 
@@ -49,7 +49,7 @@ it('can delete old records that are older than a given number of days', function
 it('can delete old records that are older than a given date', function () {
     useCleanupConfig(function (CleanupConfig $cleanupConfig) {
         $cleanupConfig->olderThan(now()->subDays(2));
-    });
+    }, TestModel::class);
 
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
@@ -59,7 +59,7 @@ it('can delete old records that are older than a given date', function () {
         '2020-01-01',
         '2019-12-31',
         '2019-12-30',
-    ]);
+    ], TestModel::class);
 });
 
 it('can use a scope to filter records to be deleted', function () {
@@ -73,7 +73,7 @@ it('can use a scope to filter records to be deleted', function () {
             ->scope(function (Builder $query) {
                 $query->where('status', 'inactive');
             });
-    });
+    }, TestModel::class);
 
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
@@ -87,7 +87,7 @@ it('can use a scope to filter records to be deleted', function () {
         '2019-12-27',
         '2019-12-26',
         '2019-12-25',
-    ]);
+    ], TestModel::class);
 });
 
 test('using a scope will not delete any records not selected by older than', function () {
@@ -99,7 +99,7 @@ test('using a scope will not delete any records not selected by older than', fun
             ->scope(function (Builder $query) {
                 $query->where('status', 'inactive');
             });
-    });
+    }, TestModel::class);
 
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
@@ -109,7 +109,7 @@ test('using a scope will not delete any records not selected by older than', fun
         '2020-01-01',
         '2019-12-31',
         '2019-12-30',
-    ]);
+    ], TestModel::class);
 });
 
 test('if there is no older than used than the scope can target any record', function () {
@@ -120,13 +120,13 @@ test('if there is no older than used than the scope can target any record', func
             ->scope(function (Builder $query) {
                 $query->where('status', 'inactive');
             });
-    });
+    }, TestModel::class);
 
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
     assertModelsExistForDays([
         '2020-01-01',
-    ]);
+    ], TestModel::class);
 });
 
 it('can delete old records in a chunked way', function () {
@@ -134,7 +134,7 @@ it('can delete old records in a chunked way', function () {
         $cleanupConfig
             ->olderThanDays(2)
             ->chunk(2);
-    });
+    }, TestModel::class);
 
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
@@ -144,7 +144,7 @@ it('can delete old records in a chunked way', function () {
         '2020-01-01',
         '2019-12-31',
         '2019-12-30',
-    ]);
+    ], TestModel::class);
 
     assertDeleteQueriesExecuted(3);
 });
@@ -158,7 +158,7 @@ it('can use custom continue while closure when deleting old records in a chunked
 
                 return false;
             });
-    });
+    }, TestModel::class);
 
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
@@ -171,7 +171,7 @@ it('can use custom continue while closure when deleting old records in a chunked
         '2019-12-27',
         '2019-12-26',
         '2019-12-25',
-    ]);
+    ], TestModel::class);
 
     assertDeleteQueriesExecuted(1);
 });
@@ -183,7 +183,7 @@ it('will stop deleting when no records are being deleted anymore', function () {
             ->chunk(2, function () {
                 return true;
             });
-    });
+    }, TestModel::class);
 
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
 
@@ -193,7 +193,7 @@ it('will stop deleting when no records are being deleted anymore', function () {
         '2020-01-01',
         '2019-12-31',
         '2019-12-30',
-    ]);
+    ], TestModel::class);
 
     assertDeleteQueriesExecuted(4);
 
@@ -211,7 +211,7 @@ it('can use a custom date attribute', function () {
         $cleanupConfig
             ->useDateAttribute('custom_date')
             ->olderThanDays(20);
-    });
+    }, TestModel::class);
 
     TestTime::addDays(20);
     artisan(CleanUpModelsCommand::class)->assertExitCode(0);
@@ -224,7 +224,7 @@ it('can use a custom date attribute', function () {
 
 it('will not delete all records when nothing has been specified on cleanup config', function () {
     useCleanupConfig(function (CleanupConfig $cleanupConfig) {
-    });
+    }, TestModel::class);
 
     assertExceptionThrown(function () {
         artisan(CleanUpModelsCommand::class)->assertExitCode(0);

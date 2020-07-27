@@ -11,16 +11,13 @@ use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertInstanceOf;
 use function PHPUnit\Framework\assertTrue;
 use Tests\Models\TestModel;
-use Tests\Models\TestSoftDeletableModel;
 
-function useCleanupConfig(Closure $closure)
+function useCleanupConfig(Closure $closure, $model)
 {
-    TestModel::setCleanupConfigClosure($closure);
-    TestSoftDeletableModel::setCleanupConfigClosure($closure);
+    $model::setCleanupConfigClosure($closure);
 
     config()->set('model-cleanup.models', [
-        TestModel::class,
-        TestSoftDeletableModel::class,
+        $model,
     ]);
 }
 
@@ -42,9 +39,19 @@ function assertDeleteQueriesExecuted(int $expectedCount)
     );
 }
 
-function assertModelsExistForDays(array $expectedDates)
+function assertModelsExistForDays(array $expectedDates, $model)
 {
-    $actualDates = TestModel::all()
+    $actualDates = $model::all()
+        ->pluck('created_at')
+        ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
+        ->toArray();
+
+    assertEquals($expectedDates, $actualDates);
+}
+
+function assertDeletedModelsExistForDays(array $expectedDates, $model)
+{
+    $actualDates = $model::onlyTrashed()
         ->pluck('created_at')
         ->map(fn (Carbon $createdAt) => $createdAt->format('Y-m-d'))
         ->toArray();
