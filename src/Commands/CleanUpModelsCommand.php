@@ -76,7 +76,9 @@ class CleanUpModelsCommand extends Command
                 $query->limit($cleanupConfig->chunkBy);
             }
 
-            $numberOfDeletedRecords = (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($model)) ? $query->forceDelete() : $query->delete());
+            $numberOfDeletedRecords = (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses($model)) 
+               ? $query->forceDelete()
+               : $query->delete());
 
             $totalNumberOfDeletedRecords += $numberOfDeletedRecords;
 
