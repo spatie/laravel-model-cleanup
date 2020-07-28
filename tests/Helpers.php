@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertInstanceOf;
 use function PHPUnit\Framework\assertTrue;
-use Tests\Models\TestModel;
 
 function useCleanupConfig(Closure $closure, string $model)
 {

@@ -2,9 +2,7 @@
 
 namespace Tests;
 
-use Carbon\Carbon;
 use function Pest\Laravel\artisan;
-use function PHPUnit\Framework\assertEquals;
 use Spatie\ModelCleanup\CleanupConfig;
 use Spatie\ModelCleanup\Commands\CleanUpModelsCommand;
 use Tests\Models\TestSoftDeletableModel;
