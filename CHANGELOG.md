@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-model-cleanup` will be documented in this file
 
+## 3.1.0 - 2020-07-28
+
+- add support for soft deletes
+
 ## 3.0.6 - 2020-07-23
 
 - improve command output
