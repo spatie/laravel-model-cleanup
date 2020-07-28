@@ -119,6 +119,11 @@ return [
 
 When running the console command `clean:models` all models older than 5 days will be deleted.
 
+### Soft deleted models
+
+This package also supports cleaning up models that have soft deleting enabled.
+Models that use the `Illuminate\Database\Eloquent\SoftDeletes` trait and are considered old, will be permanently removed from your database instead of being marked as deleted.
+
 ### Available methods on `CleanupConfig`
 
 ### `olderThanDays`
