@@ -2,34 +2,10 @@
 
 namespace Tests;
 
-use Carbon\Carbon;
 use Tests\Models\TestSoftDeletableModel;
 
-class TestSoftDeletableModelFactory
+class TestSoftDeletableModelFactory extends TestModelFactory
 {
-    private ?Carbon $startingFrom = null;
-
-    private int $numberOfDays = 0;
-
-    public static function new(): self
-    {
-        return new static();
-    }
-
-    public function startingFrom(Carbon $startingFrom): self
-    {
-        $this->startingFrom = $startingFrom;
-
-        return $this;
-    }
-
-    public function forPreviousDays(int $numberOfDays): self
-    {
-        $this->numberOfDays = $numberOfDays;
-
-        return $this;
-    }
-
     public function create()
     {
         $createdAt = $this->startingFrom;

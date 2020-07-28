@@ -7,9 +7,9 @@ use Tests\Models\TestModel;
 
 class TestModelFactory
 {
-    private ?Carbon $startingFrom = null;
+    protected ?Carbon $startingFrom = null;
 
-    private int $numberOfDays = 0;
+    protected int $numberOfDays = 0;
 
     public static function new(): self
     {
