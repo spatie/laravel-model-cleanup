@@ -69,14 +69,14 @@ return [
 
 ```
 
-Optionally, you can schedule the `Spatie\Model\CleanUpModelsCommand` to run at a frequency of which you want to clean up models. Here's an example where all models will be cleaned up every day at midnight.
+Optionally, you can schedule the `Spatie\ModelCleanup\Commands\CleanUpModelsCommand` to run at a frequency of which you want to clean up models. Here's an example where all models will be cleaned up every day at midnight.
 
 ```php
 // in app/Console/Kernel.php
 
 protected function schedule(Schedule $schedule)
 {
-    $schedule->command(\Spatie\Model\CleanUpModelsCommand::class)->daily();
+    $schedule->command(\Spatie\ModelCleanup\Commands\CleanUpModelsCommand::class)->daily();
 }
 ```
 
