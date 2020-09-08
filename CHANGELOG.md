@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-model-cleanup` will be documented in this file
 
+## 3.1.1 - 2020-09-08
+
+- add support for Laravel 8
+
 ## 3.1.0 - 2020-07-28
 
 - add support for soft deletes
