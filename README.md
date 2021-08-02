@@ -1,3 +1,5 @@
+**THIS PACKAGE IS NO LONGER MAINTAINED, WE RECOMMEND TO USE LARAVEL'S BUILT IN PRUNABLE**
+
 # Clean up unneeded records
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-model-cleanup.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-model-cleanup)
